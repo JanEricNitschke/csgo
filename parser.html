@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Parser &mdash; awpy 1.0 documentation</title>
+  <title>Parser &mdash; awpy 1.1.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -82,10 +83,10 @@
            <div itemprop="articleBody">
              
   <section id="parser">
-<h1>Parser<a class="headerlink" href="#parser" title="Permalink to this headline"></a></h1>
+<h1>Parser<a class="headerlink" href="#parser" title="Permalink to this heading"></a></h1>
 <p>This is the parser module. You can use it to parse and clean CSGO demos. To see what parsed demo looks like, and what the JSON keys indicate, please visit <a class="reference internal" href="parser_output.html"><span class="doc">Example Parser JSON</span></a>.</p>
 <section id="module-awpy.parser.cleaning">
-<span id="awpy-parser-cleaning"></span><h2>awpy.parser.cleaning<a class="headerlink" href="#module-awpy.parser.cleaning" title="Permalink to this headline"></a></h2>
+<span id="awpy-parser-cleaning"></span><h2>awpy.parser.cleaning<a class="headerlink" href="#module-awpy.parser.cleaning" title="Permalink to this heading"></a></h2>
 <p>Data cleaning functions</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="awpy.parser.cleaning.associate_entities">
@@ -125,10 +126,10 @@
 
 </section>
 <section id="module-awpy.parser.demoparser">
-<span id="awpy-parser-demoparser"></span><h2>awpy.parser.demoparser<a class="headerlink" href="#module-awpy.parser.demoparser" title="Permalink to this headline"></a></h2>
+<span id="awpy-parser-demoparser"></span><h2>awpy.parser.demoparser<a class="headerlink" href="#module-awpy.parser.demoparser" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">awpy.parser.demoparser.</span></span><span class="sig-name descname"><span class="pre">DemoParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">demofile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">demo_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trade_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmg_rolled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buy_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hltv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_indentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/parser/demoparser.html#DemoParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.parser.demoparser.DemoParser" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">awpy.parser.demoparser.</span></span><span class="sig-name descname"><span class="pre">DemoParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">demofile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">demo_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_kill_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trade_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmg_rolled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buy_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hltv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_indentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/parser/demoparser.html#DemoParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.parser.demoparser.DemoParser" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>DemoParser can parse, load and clean data from a CSGO demofile. Can be instantiated without a specified demofile.</p>
 <dl class="py attribute">
@@ -143,23 +144,23 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.log">
-<span class="sig-name descname"><span class="pre">log</span></span><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.log" title="Permalink to this definition"></a></dt>
-<dd><p>A boolean denoting if a log will be written. If true, log is written to “csgo_parser.log”</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>boolean</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.demo_id">
 <span class="sig-name descname"><span class="pre">demo_id</span></span><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.demo_id" title="Permalink to this definition"></a></dt>
 <dd><p>A unique demo name/game id. Default is inferred from demofile name</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.log">
+<span class="sig-name descname"><span class="pre">log</span></span><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.log" title="Permalink to this definition"></a></dt>
+<dd><p>A boolean indicating if the log should print to stdout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>boolean</p>
 </dd>
 </dl>
 </dd></dl>
@@ -179,6 +180,17 @@
 <dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.parse_frames">
 <span class="sig-name descname"><span class="pre">parse_frames</span></span><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.parse_frames" title="Permalink to this definition"></a></dt>
 <dd><p>Flag if you want to parse frames (trajectory data) or not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.parse_kill_frames">
+<span class="sig-name descname"><span class="pre">parse_kill_frames</span></span><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.parse_kill_frames" title="Permalink to this definition"></a></dt>
+<dd><p>Flag if you want to parse frames on kills</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>bool</p>
@@ -221,12 +233,12 @@
 
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>ValueError</strong> – Raises a ValueError if the Golang version is lower than 1.14</p>
+<dd class="field-odd"><p><strong>ValueError</strong> – Raises a ValueError if the Golang version is lower than 1.17</p>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.clean_rounds">
-<span class="sig-name descname"><span class="pre">clean_rounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remove_no_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_warmups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_knifes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_bad_timings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_excess_players</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_excess_kills</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_bad_endings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/parser/demoparser.html#DemoParser.clean_rounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.clean_rounds" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">clean_rounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remove_no_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_warmups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_knifes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_bad_timings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_excess_players</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_excess_kills</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_bad_endings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_bad_scoring</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/parser/demoparser.html#DemoParser.clean_rounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.clean_rounds" title="Permalink to this definition"></a></dt>
 <dd><p>Cleans a parsed demofile JSON.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -238,6 +250,7 @@
 <li><p><strong>remove_excess_players</strong> (<em>bool</em><em>, </em><em>optional</em>) – Remove rounds with more than 5 players. Defaults to True.</p></li>
 <li><p><strong>remove_excess_kills</strong> (<em>bool</em><em>, </em><em>optional</em>) – Remove rounds with more than 10 kills. Defaults to True.</p></li>
 <li><p><strong>remove_bad_endings</strong> (<em>bool</em><em>, </em><em>optional</em>) – Remove rounds with bad round end reasons. Defaults to True.</p></li>
+<li><p><strong>remove_bad_scoring</strong> (<em>bool</em><em>, </em><em>optional</em>) – Remove rounds where the scoring is off (like scores going below the previous round’s). Defaults to False.</p></li>
 <li><p><strong>return_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Return JSON or DataFrame. Defaults to “json”.</p></li>
 <li><p><strong>save_to_json</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to write the JSON to a file. Defaults to True.</p></li>
 </ul>
@@ -256,11 +269,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.parse">
-<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/parser/demoparser.html#DemoParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.parse" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/parser/demoparser.html#DemoParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.parse" title="Permalink to this definition"></a></dt>
 <dd><p>Wrapper for parse_demo() and read_json(). Use to parse a demo.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>return_type</strong> (<em>string</em>) – Either “json” or “df”</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>return_type</strong> (<em>string</em>) – Either “json” or “df”</p></li>
+<li><p><strong>clean</strong> (<em>bool</em><em>, </em><em>optional</em>) – True to run clean_rounds, otherwise, uncleaned data is returned. Defaults to True.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A dictionary of output (which is parsed to a JSON file in the working directory)</p>
@@ -284,7 +300,7 @@
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> – Raises a ValueError if the Golang version is lower than 1.14</p></li>
+<li><p><strong>ValueError</strong> – Raises a ValueError if the Golang version is lower than 1.17</p></li>
 <li><p><strong>FileNotFoundError</strong> – Raises a FileNotFoundError if the demofile path does not exist.</p></li>
 </ul>
 </dd>
@@ -318,6 +334,20 @@
 </dd>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><strong>FileNotFoundError</strong> – Raises a FileNotFoundError if the JSON path doesn’t exist</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.remove_bad_scoring">
+<span class="sig-name descname"><span class="pre">remove_bad_scoring</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/parser/demoparser.html#DemoParser.remove_bad_scoring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.remove_bad_scoring" title="Permalink to this definition"></a></dt>
+<dd><p>Removes rounds where the scoring is bad.</p>
+<p>We loop through the rounds:
+If the round ahead has equal or less score, we do not add the current round.
+If the round ahead has +1 score, we add the current round</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>AttributeError</strong> – Raises an AttributeError if the .json attribute is None</p>
 </dd>
 </dl>
 </dd></dl>
