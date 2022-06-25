@@ -76,13 +76,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for awpy.visualization.plot</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">from</span> <span class="nn">email.policy</span> <span class="kn">import</span> <span class="n">default</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">imageio</span>
 
+<span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-
+<span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 
 <span class="kn">from</span> <span class="nn">awpy.data</span> <span class="kn">import</span> <span class="n">MAP_DATA</span>
 
@@ -146,6 +149,8 @@
     <span class="n">positions</span><span class="o">=</span><span class="p">[],</span>
     <span class="n">colors</span><span class="o">=</span><span class="p">[],</span>
     <span class="n">markers</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">alphas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">sizes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">map_name</span><span class="o">=</span><span class="s2">&quot;de_ancient&quot;</span><span class="p">,</span>
     <span class="n">map_type</span><span class="o">=</span><span class="s2">&quot;original&quot;</span><span class="p">,</span>
     <span class="n">dark</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -157,6 +162,8 @@
 <span class="sd">        positions (list): List of lists of length 2 ([[x,y], ...])</span>
 <span class="sd">        colors (list): List of colors for each player</span>
 <span class="sd">        markers (list): List of marker types for each player</span>
+<span class="sd">        alphas (list): List of alpha values for each player</span>
+<span class="sd">        sizes (list): List of marker sizes for each player</span>
 <span class="sd">        map_name (string): Map to search</span>
 <span class="sd">        map_type (string): &quot;original&quot; or &quot;simpleradar&quot;</span>
 <span class="sd">        dark (boolean): Only for use with map_type=&quot;simpleradar&quot;. Indicates if you want to use the SimpleRadar dark map type</span>
@@ -165,17 +172,23 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        matplotlib fig and ax</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">alphas</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sizes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;lines.markersize&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
     <span class="n">f</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">plot_map</span><span class="p">(</span><span class="n">map_name</span><span class="o">=</span><span class="n">map_name</span><span class="p">,</span> <span class="n">map_type</span><span class="o">=</span><span class="n">map_type</span><span class="p">,</span> <span class="n">dark</span><span class="o">=</span><span class="n">dark</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">markers</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">al</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">markers</span><span class="p">,</span> <span class="n">alphas</span><span class="p">,</span> <span class="n">sizes</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">apply_transformation</span><span class="p">:</span>
             <span class="n">a</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
                 <span class="n">x</span><span class="o">=</span><span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
                 <span class="n">y</span><span class="o">=</span><span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span>
                 <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span>
                 <span class="n">marker</span><span class="o">=</span><span class="n">m</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="n">al</span><span class="p">,</span>
+                <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">a</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">al</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">)</span>
     <span class="n">a</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">a</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">a</span></div>
@@ -189,7 +202,6 @@
 <span class="sd">    Args:</span>
 <span class="sd">        filename (string): Filename to save the gif</span>
 <span class="sd">        frames (list): List of frames from a parsed demo</span>
-<span class="sd">        markers (list): List of marker types for each player</span>
 <span class="sd">        map_name (string): Map to search</span>
 <span class="sd">        map_type (string): &quot;original&quot; or &quot;simpleradar&quot;</span>
 <span class="sd">        dark (boolean): Only for use with map_type=&quot;simpleradar&quot;. Indicates if you want to use the SimpleRadar dark map type</span>
@@ -296,6 +308,421 @@
     <span class="n">a</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">a</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">a</span></div>
+
+
+<div class="viewcode-block" id="get_player_id"><a class="viewcode-back" href="../../../visualization.html#awpy.visualization.plot.get_player_id">[docs]</a><span class="k">def</span> <span class="nf">get_player_id</span><span class="p">(</span><span class="n">player</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extracts a players steamID from their player dictionary in a given frame.</span>
+
+<span class="sd">    Each player has a unique steamID by which they can be identified.</span>
+<span class="sd">    Bots, however, do not naturally have a steamID and are instead all assigned 0.</span>
+<span class="sd">    To avoid overlap bots are instead identified by their name which is unique in any given game.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        player (dictionary): Dictionary about a players position and status in a given frame</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">player</span><span class="p">[</span><span class="s2">&quot;steamID&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">player</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">player</span><span class="p">[</span><span class="s2">&quot;steamID&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="get_shortest_distances_mapping"><a class="viewcode-back" href="../../../visualization.html#awpy.visualization.plot.get_shortest_distances_mapping">[docs]</a><span class="k">def</span> <span class="nf">get_shortest_distances_mapping</span><span class="p">(</span><span class="n">leaders</span><span class="p">,</span> <span class="n">current_positions</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gets the mapping between players in the current round and lead players that has the shortest total distance between mapped players.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        leaders (dictionary): Dictionary of leaders position, alive status and color index in the current frame</span>
+<span class="sd">        current_positions (list): List of tuples of players x, y coordinates in the current round and frame</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list mapping the the player at index i in the current round to the leader at position list[i] in the leaders dictionary.</span>
+<span class="sd">        (Requires python 3.6 because it relies on the order of elements in the dict)&quot;&quot;&quot;</span>
+    <span class="n">smallest_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+    <span class="n">best_mapping</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">leaders</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_positions</span><span class="p">)):</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">current_pos</span><span class="p">,</span> <span class="n">leader_pos</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mapping</span><span class="p">):</span>
+            <span class="c1"># Remove dead players from consideration</span>
+            <span class="k">if</span> <span class="n">current_positions</span><span class="p">[</span><span class="n">current_pos</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">dist</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="n">current_positions</span><span class="p">[</span><span class="n">current_pos</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">leaders</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_pos</span><span class="p">]][</span><span class="s2">&quot;pos&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span>
+                <span class="n">current_positions</span><span class="p">[</span><span class="n">current_pos</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">leaders</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_pos</span><span class="p">]][</span><span class="s2">&quot;pos&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">smallest_distance</span><span class="p">:</span>
+            <span class="n">smallest_distance</span> <span class="o">=</span> <span class="n">dist</span>
+            <span class="n">best_mapping</span> <span class="o">=</span> <span class="n">mapping</span>
+    <span class="n">best_mapping</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">best_mapping</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">leader_pos</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">best_mapping</span><span class="p">):</span>
+        <span class="n">best_mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_pos</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">best_mapping</span></div>
+
+
+<div class="viewcode-block" id="tree"><a class="viewcode-back" href="../../../visualization.html#awpy.visualization.plot.tree">[docs]</a><span class="k">def</span> <span class="nf">tree</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Builds tree data structure from nested defaultdicts</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An empty tree&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">the_tree</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="n">the_tree</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">the_tree</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="plot_rounds_different_players"><a class="viewcode-back" href="../../../visualization.html#awpy.visualization.plot.plot_rounds_different_players">[docs]</a><span class="k">def</span> <span class="nf">plot_rounds_different_players</span><span class="p">(</span>
+    <span class="n">filename</span><span class="p">,</span>
+    <span class="n">frames_list</span><span class="p">,</span>
+    <span class="n">map_name</span><span class="o">=</span><span class="s2">&quot;de_ancient&quot;</span><span class="p">,</span>
+    <span class="n">map_type</span><span class="o">=</span><span class="s2">&quot;original&quot;</span><span class="p">,</span>
+    <span class="n">dark</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">sides</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plots a list of rounds and saves as a .gif. Each player in the first round is assigned a separate color. Players in the other rounds are matched by proximity.</span>
+<span class="sd">     Only use untransformed coordinates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (string): Filename to save the gif</span>
+<span class="sd">        frames_list (list): List of frames lists from parsed demos</span>
+<span class="sd">        map_name (string): Map to search</span>
+<span class="sd">        map_type (string): &quot;original&quot; or &quot;simpleradar&quot;</span>
+<span class="sd">        dark (boolean): Only for use with map_type=&quot;simpleradar&quot;. Indicates if you want to use the SimpleRadar dark map type</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib fig and ax, saves .gif</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s2">&quot;csgo_tmp&quot;</span><span class="p">):</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="s2">&quot;csgo_tmp/&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s2">&quot;csgo_tmp&quot;</span><span class="p">)</span>
+    <span class="n">image_files</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Needed to check if leaders have been fully initialized</span>
+    <span class="n">dict_initialized</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+    <span class="c1"># Used to store values for each round separately. Needed when a round ends.</span>
+    <span class="n">frame_positions</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">frame_colors</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">frame_markers</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">frame_alphas</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">frame_sizes</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">colors_list</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="s2">&quot;fuchsia&quot;</span><span class="p">,</span> <span class="s2">&quot;lime&quot;</span><span class="p">,</span> <span class="s2">&quot;orange&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;ct&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;gold&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+    <span class="c1"># Dict to store the colors (via index) of players that have died so that they dont switch color posthumously</span>
+    <span class="n">dead_colors</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># Determine how many frames are there in total</span>
+    <span class="n">max_frames</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="k">for</span> <span class="n">frames</span> <span class="ow">in</span> <span class="n">frames_list</span><span class="p">)</span>
+    <span class="c1"># Build tree data structure for leaders</span>
+    <span class="c1"># Currently leaders={&quot;t&quot;:{},&quot;ct&quot;:{}} would probably do as well</span>
+    <span class="c1"># For each side the keys are a players steamd id + &quot;_&quot; + frame_number in case the same steamid occurs in multiple rounds</span>
+    <span class="n">leaders</span> <span class="o">=</span> <span class="n">tree</span><span class="p">()</span>
+    <span class="c1"># Want to avoid unsafe defaults</span>
+    <span class="k">if</span> <span class="n">sides</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sides</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ct&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">max_frames</span><span class="p">)):</span>
+        <span class="c1"># Initialize lists used to store things from all rounds to plot for each frame</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">markers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">alphas</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Is used to determine if a specific leader has already been seen. Needed when a leader drops out because their round has already ended</span>
+        <span class="n">checked_in</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="c1"># Loop over all the rounds and update the position and status of all leaders</span>
+        <span class="k">for</span> <span class="n">frame_index</span><span class="p">,</span> <span class="n">frames</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames_list</span><span class="p">):</span>
+            <span class="c1"># Check if the current frame has already ended</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">sides</span><span class="p">:</span>
+                    <span class="c1"># Do not do this if leaders has not been fully initialized</span>
+                    <span class="k">if</span> <span class="n">dict_initialized</span><span class="p">[</span><span class="n">side</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">player_index</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="s2">&quot;players&quot;</span><span class="p">]):</span>
+                            <span class="n">player_id</span> <span class="o">=</span> <span class="n">get_player_id</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">frame_index</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="p">(</span>
+                                <span class="n">player_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">]</span>
+                                <span class="ow">or</span> <span class="n">player_id</span> <span class="ow">in</span> <span class="n">checked_in</span>
+                            <span class="p">):</span>
+                                <span class="k">continue</span>
+                            <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
+                                <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span>
+                            <span class="p">)</span>
+                            <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;hp&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                                <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;is_dead&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span>
+        <span class="c1"># Now do another loop to add all players in all frames with their appropriate colors.</span>
+        <span class="k">for</span> <span class="n">frame_index</span><span class="p">,</span> <span class="n">frames</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames_list</span><span class="p">):</span>
+            <span class="c1"># Initialize lists used to store values for this round for this frame</span>
+            <span class="n">frame_positions</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">frame_colors</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">frame_markers</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">frame_alphas</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">frame_sizes</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">sides</span><span class="p">:</span>
+                    <span class="c1"># If we have already initialized leaders</span>
+                    <span class="k">if</span> <span class="n">dict_initialized</span><span class="p">[</span><span class="n">side</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                        <span class="c1"># Get the positions of all players in the current frame and round</span>
+                        <span class="n">current_positions</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">for</span> <span class="n">player_index</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="s2">&quot;players&quot;</span><span class="p">]):</span>
+                            <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
+                                <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span>
+                            <span class="p">)</span>
+                            <span class="c1"># Remove dead players from consideration</span>
+                            <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;hp&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                                <span class="n">current_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">current_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+                        <span class="c1"># Find the best mapping between current players and leaders</span>
+                        <span class="n">mapping</span> <span class="o">=</span> <span class="n">get_shortest_distances_mapping</span><span class="p">(</span>
+                            <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">],</span> <span class="n">current_positions</span>
+                        <span class="p">)</span>
+                    <span class="c1"># Now do the actual plotting</span>
+                    <span class="k">for</span> <span class="n">player_index</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="s2">&quot;players&quot;</span><span class="p">]):</span>
+                        <span class="n">player_id</span> <span class="o">=</span> <span class="n">get_player_id</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">frame_index</span><span class="p">)</span>
+                        <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
+                            <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span>
+                        <span class="p">)</span>
+
+                        <span class="n">is_dead</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;hp&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">is_dead</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="n">frame_markers</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">frame_markers</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+
+                        <span class="c1"># If the leaders have not been initialized yet, do so</span>
+                        <span class="k">if</span> <span class="n">dict_initialized</span><span class="p">[</span><span class="n">side</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                            <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">player_index</span>
+                            <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span>
+                            <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;is_dead&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_dead</span>
+
+                        <span class="c1"># This is relevant for all subsequent frames</span>
+                        <span class="c1"># If we are a leader we update our values</span>
+                        <span class="c1"># Should be able to be dropped as we already updated leaders in the earlier loop</span>
+                        <span class="k">if</span> <span class="n">player_id</span> <span class="ow">in</span> <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">]:</span>
+                            <span class="c1"># Update the is_dead status</span>
+                            <span class="k">if</span> <span class="n">is_dead</span><span class="p">:</span>
+                                <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;is_dead&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="c1"># Grabour current player_index from what it was the previous round to achieve color consistency</span>
+                            <span class="n">player_index</span> <span class="o">=</span> <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;index&quot;</span><span class="p">]</span>
+                            <span class="c1"># Update our position</span>
+                            <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span>
+                        <span class="c1"># If not a leader</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c1"># Grab the id of the leader assigned to this player</span>
+                            <span class="n">assigned_leader</span> <span class="o">=</span> <span class="n">mapping</span><span class="p">[</span><span class="n">player_index</span><span class="p">]</span>
+                            <span class="c1"># If the assigned leader is now dead or has not been assigned (happens when his round is already over)</span>
+                            <span class="c1"># Then we take over that position if we are not also dead</span>
+                            <span class="k">if</span> <span class="p">(</span>
+                                <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">assigned_leader</span><span class="p">][</span><span class="s2">&quot;is_dead&quot;</span><span class="p">]</span>
+                                <span class="ow">or</span> <span class="n">assigned_leader</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">checked_in</span>
+                            <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_dead</span><span class="p">:</span>
+                                <span class="c1"># Remove the previous leaders entry from the dict</span>
+                                <span class="n">old_index</span> <span class="o">=</span> <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">assigned_leader</span><span class="p">][</span><span class="s2">&quot;index&quot;</span><span class="p">]</span>
+                                <span class="k">del</span> <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">assigned_leader</span><span class="p">]</span>
+                                <span class="c1"># Fill with our own values but use their prior index to keep color consistency when switching leaders</span>
+                                <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old_index</span>
+                                <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span>
+                                <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;is_dead&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                                <span class="n">player_index</span> <span class="o">=</span> <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;index&quot;</span><span class="p">]</span>
+                            <span class="c1"># If the leader is alive and present or if we are also dead</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="c1"># We just grab our color</span>
+                                <span class="n">player_index</span> <span class="o">=</span> <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">assigned_leader</span><span class="p">][</span><span class="s2">&quot;index&quot;</span><span class="p">]</span>
+                        <span class="c1"># If we just died this frame store our current color in a dict for later reuse</span>
+                        <span class="k">if</span> <span class="n">is_dead</span> <span class="ow">and</span> <span class="n">player_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dead_colors</span><span class="p">:</span>
+                            <span class="n">dead_colors</span><span class="p">[</span><span class="n">player_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">colors_list</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_index</span><span class="p">]</span>
+                        <span class="c1"># If we are dead use our stored color instead of the one we were assigned</span>
+                        <span class="k">if</span> <span class="n">is_dead</span><span class="p">:</span>
+                            <span class="n">frame_colors</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dead_colors</span><span class="p">[</span><span class="n">player_id</span><span class="p">])</span>
+                        <span class="c1"># Otherwise use the assigned color</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">frame_colors</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="n">colors_list</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_index</span><span class="p">]</span>
+                            <span class="p">)</span>
+                        <span class="n">frame_positions</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+                        <span class="c1"># If we are an alive leader we get opaque and big markers</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="n">player_id</span> <span class="ow">in</span> <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">]</span>
+                            <span class="ow">and</span> <span class="ow">not</span> <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;is_dead&quot;</span><span class="p">]</span>
+                            <span class="ow">and</span> <span class="ow">not</span> <span class="n">player_id</span> <span class="ow">in</span> <span class="n">checked_in</span>
+                        <span class="p">):</span>
+                            <span class="n">frame_alphas</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                            <span class="n">frame_sizes</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;lines.markersize&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+                            <span class="p">)</span>
+                        <span class="c1"># If not we get partially transparent and small ones</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">frame_alphas</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+                            <span class="n">frame_sizes</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="mf">0.3</span> <span class="o">*</span> <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;lines.markersize&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+                            <span class="p">)</span>
+                        <span class="c1"># If we are a leader we are now checked in so everyone knows our round has not ended yet</span>
+                        <span class="k">if</span> <span class="n">player_id</span> <span class="ow">in</span> <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">]:</span>
+                            <span class="n">checked_in</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">player_id</span><span class="p">)</span>
+                    <span class="c1"># Once we have done our first loop over a side we are initialized</span>
+                    <span class="n">dict_initialized</span><span class="p">[</span><span class="n">side</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1"># Ádd the values for the current round to the lists for the whole frame</span>
+            <span class="n">positions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">frame_positions</span><span class="p">[</span><span class="n">frame_index</span><span class="p">])</span>
+            <span class="n">colors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">frame_colors</span><span class="p">[</span><span class="n">frame_index</span><span class="p">])</span>
+            <span class="n">markers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">frame_markers</span><span class="p">[</span><span class="n">frame_index</span><span class="p">])</span>
+            <span class="n">alphas</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">frame_alphas</span><span class="p">[</span><span class="n">frame_index</span><span class="p">])</span>
+            <span class="n">sizes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">frame_sizes</span><span class="p">[</span><span class="n">frame_index</span><span class="p">])</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">plot_positions</span><span class="p">(</span>
+            <span class="n">positions</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span>
+            <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span>
+            <span class="n">markers</span><span class="o">=</span><span class="n">markers</span><span class="p">,</span>
+            <span class="n">alphas</span><span class="o">=</span><span class="n">alphas</span><span class="p">,</span>
+            <span class="n">sizes</span><span class="o">=</span><span class="n">sizes</span><span class="p">,</span>
+            <span class="n">map_name</span><span class="o">=</span><span class="n">map_name</span><span class="p">,</span>
+            <span class="n">map_type</span><span class="o">=</span><span class="n">map_type</span><span class="p">,</span>
+            <span class="n">dark</span><span class="o">=</span><span class="n">dark</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">image_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;csgo_tmp/</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">image_files</span><span class="p">:</span>
+        <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
+    <span class="n">imageio</span><span class="o">.</span><span class="n">mimsave</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">images</span><span class="p">)</span>
+    <span class="c1"># shutil.rmtree(&quot;csgo_tmp/&quot;)</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="plot_rounds_same_players"><a class="viewcode-back" href="../../../visualization.html#awpy.visualization.plot.plot_rounds_same_players">[docs]</a><span class="k">def</span> <span class="nf">plot_rounds_same_players</span><span class="p">(</span>
+    <span class="n">filename</span><span class="p">,</span>
+    <span class="n">frames_list</span><span class="p">,</span>
+    <span class="n">map_name</span><span class="o">=</span><span class="s2">&quot;de_ancient&quot;</span><span class="p">,</span>
+    <span class="n">map_type</span><span class="o">=</span><span class="s2">&quot;original&quot;</span><span class="p">,</span>
+    <span class="n">dark</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">sides</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plots a list of rounds and saves as a .gif. Each player in the first round is assigned a separate color. Players in the other rounds are matched by steam id.</span>
+<span class="sd">     Only use untransformed coordinates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (string): Filename to save the gif</span>
+<span class="sd">        frames_list (list): List of frames lists from parsed demos</span>
+<span class="sd">        map_name (string): Map to search</span>
+<span class="sd">        map_type (string): &quot;original&quot; or &quot;simpleradar&quot;</span>
+<span class="sd">        dark (boolean): Only for use with map_type=&quot;simpleradar&quot;. Indicates if you want to use the SimpleRadar dark map type</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        matplotlib fig and ax, saves .gif</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s2">&quot;csgo_tmp&quot;</span><span class="p">):</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="s2">&quot;csgo_tmp/&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s2">&quot;csgo_tmp&quot;</span><span class="p">)</span>
+    <span class="n">image_files</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Needed to check if leaders have been fully initialized</span>
+    <span class="n">dict_initialized</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;ct&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+    <span class="c1"># Dictionary used to map each players steam id to a given index (color)</span>
+    <span class="n">id_number_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">&quot;ct&quot;</span><span class="p">:</span> <span class="p">{}}</span>
+    <span class="c1"># Used to store values for each round separately. Needed when a round ends.</span>
+    <span class="n">frame_positions</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">frame_colors</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">frame_markers</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">frame_alphas</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">frame_sizes</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">colors_list</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="s2">&quot;fuchsia&quot;</span><span class="p">,</span> <span class="s2">&quot;lime&quot;</span><span class="p">,</span> <span class="s2">&quot;orange&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;ct&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="s2">&quot;gold&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+    <span class="c1"># Determine how many frames are there in total</span>
+    <span class="n">max_frames</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="k">for</span> <span class="n">frames</span> <span class="ow">in</span> <span class="n">frames_list</span><span class="p">)</span>
+    <span class="c1"># Want to avoid unsafe defaults</span>
+    <span class="k">if</span> <span class="n">sides</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sides</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ct&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">max_frames</span><span class="p">)):</span>
+        <span class="c1"># Initialize lists used to store things from all rounds to plot for each frame</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">markers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">alphas</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># The first instance of a given player being alive is taken note if so that they can be marked bigger</span>
+        <span class="n">first_alive</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">5</span>
+        <span class="k">for</span> <span class="n">frame_index</span><span class="p">,</span> <span class="n">frames</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames_list</span><span class="p">):</span>
+            <span class="c1"># Initialize lists used to store values for this round for this frame</span>
+            <span class="n">frame_positions</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">frame_colors</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">frame_markers</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">frame_alphas</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">frame_sizes</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">sides</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">player_index</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="s2">&quot;players&quot;</span><span class="p">]):</span>
+                        <span class="n">player_id</span> <span class="o">=</span> <span class="n">get_player_id</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+                        <span class="c1"># Assign steam ids to their index only the first time</span>
+                        <span class="k">if</span> <span class="n">dict_initialized</span><span class="p">[</span><span class="n">side</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                            <span class="n">id_number_dict</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">player_index</span>
+                        <span class="n">player_index</span> <span class="o">=</span> <span class="n">id_number_dict</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">]</span>
+
+                        <span class="c1"># If a player hasnt been assigned they are not plotted this round (player joins or leaves mid round)</span>
+                        <span class="k">if</span> <span class="n">player_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">id_number_dict</span><span class="p">[</span><span class="n">side</span><span class="p">]:</span>
+                            <span class="k">continue</span>
+                        <span class="c1"># Color gets assigned according to matched steam id index</span>
+                        <span class="n">frame_colors</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">colors_list</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_index</span><span class="p">]</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;hp&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">frame_markers</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">frame_markers</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                <span class="sa">r</span><span class="s2">&quot;$ </span><span class="si">{}</span><span class="s2"> $&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frame_index</span><span class="p">)</span>
+                            <span class="p">)</span>
+                            <span class="k">if</span> <span class="n">first_alive</span><span class="p">[</span><span class="n">player_index</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                                <span class="n">first_alive</span><span class="p">[</span><span class="n">player_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame_index</span>
+                        <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
+                            <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span>
+                        <span class="p">)</span>
+                        <span class="n">frame_positions</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+                        <span class="c1"># First alive player gets plotted big and opaque</span>
+                        <span class="n">frame_alphas</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="mi">1</span> <span class="k">if</span> <span class="n">frame_index</span> <span class="o">==</span> <span class="n">first_alive</span><span class="p">[</span><span class="n">player_index</span><span class="p">]</span> <span class="k">else</span> <span class="mf">0.5</span>
+                        <span class="p">)</span>
+                        <span class="c1"># All others small and partially transparent</span>
+                        <span class="n">frame_sizes</span><span class="p">[</span><span class="n">frame_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;lines.markersize&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+                            <span class="k">if</span> <span class="n">frame_index</span> <span class="o">==</span> <span class="n">first_alive</span><span class="p">[</span><span class="n">player_index</span><span class="p">]</span>
+                            <span class="k">else</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;lines.markersize&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+                        <span class="p">)</span>
+                    <span class="n">dict_initialized</span><span class="p">[</span><span class="n">side</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">positions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">frame_positions</span><span class="p">[</span><span class="n">frame_index</span><span class="p">])</span>
+            <span class="n">colors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">frame_colors</span><span class="p">[</span><span class="n">frame_index</span><span class="p">])</span>
+            <span class="n">markers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">frame_markers</span><span class="p">[</span><span class="n">frame_index</span><span class="p">])</span>
+            <span class="n">alphas</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">frame_alphas</span><span class="p">[</span><span class="n">frame_index</span><span class="p">])</span>
+            <span class="n">sizes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">frame_sizes</span><span class="p">[</span><span class="n">frame_index</span><span class="p">])</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">plot_positions</span><span class="p">(</span>
+            <span class="n">positions</span><span class="o">=</span><span class="n">positions</span><span class="p">,</span>
+            <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span>
+            <span class="n">markers</span><span class="o">=</span><span class="n">markers</span><span class="p">,</span>
+            <span class="n">alphas</span><span class="o">=</span><span class="n">alphas</span><span class="p">,</span>
+            <span class="n">sizes</span><span class="o">=</span><span class="n">sizes</span><span class="p">,</span>
+            <span class="n">map_name</span><span class="o">=</span><span class="n">map_name</span><span class="p">,</span>
+            <span class="n">map_type</span><span class="o">=</span><span class="n">map_type</span><span class="p">,</span>
+            <span class="n">dark</span><span class="o">=</span><span class="n">dark</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">image_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;csgo_tmp/</span><span class="si">{}</span><span class="s2">.png&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">image_files</span><span class="p">:</span>
+        <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
+    <span class="n">imageio</span><span class="o">.</span><span class="n">mimsave</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">images</span><span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="s2">&quot;csgo_tmp/&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
 </pre></div>
 
            </div>
