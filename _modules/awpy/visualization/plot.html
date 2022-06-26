@@ -213,7 +213,7 @@
 <span class="sd">        fps (integer): Number of frames per second in the gif</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        matplotlib fig and ax, saves .gif</span>
+<span class="sd">        True, saves .gif</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s2">&quot;csgo_tmp&quot;</span><span class="p">):</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="s2">&quot;csgo_tmp/&quot;</span><span class="p">)</span>
@@ -331,8 +331,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">player</span><span class="p">[</span><span class="s2">&quot;steamID&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">player</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">player</span><span class="p">[</span><span class="s2">&quot;steamID&quot;</span><span class="p">])</span></div>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">player</span><span class="p">[</span><span class="s2">&quot;steamID&quot;</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="get_shortest_distances_mapping"><a class="viewcode-back" href="../../../visualization.html#awpy.visualization.plot.get_shortest_distances_mapping">[docs]</a><span class="k">def</span> <span class="nf">get_shortest_distances_mapping</span><span class="p">(</span><span class="n">leaders</span><span class="p">,</span> <span class="n">current_positions</span><span class="p">):</span>
@@ -405,7 +404,7 @@
 <span class="sd">        fps (integer): Number of frames per second in the gif</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        matplotlib fig and ax, saves .gif</span>
+<span class="sd">        True, saves .gif</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s2">&quot;csgo_tmp&quot;</span><span class="p">):</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="s2">&quot;csgo_tmp/&quot;</span><span class="p">)</span>
@@ -627,7 +626,7 @@
 <span class="sd">        fps (integer): Number of frames per second in the gif</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        matplotlib fig and ax, saves .gif</span>
+<span class="sd">       True, saves .gif</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s2">&quot;csgo_tmp&quot;</span><span class="p">):</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="s2">&quot;csgo_tmp/&quot;</span><span class="p">)</span>
