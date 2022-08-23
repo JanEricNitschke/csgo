@@ -351,7 +351,7 @@
 <span class="sd">        current_positions (list): List of tuples of players x, y coordinates in the current round and frame</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A list mapping the the player at index i in the current round to the leader at position list[i] in the leaders dictionary.</span>
+<span class="sd">        A list mapping the player at index i in the current round to the leader at position list[i] in the leaders dictionary.</span>
 <span class="sd">        (Requires python 3.6 because it relies on the order of elements in the dict)&quot;&quot;&quot;</span>
     <span class="n">smallest_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
     <span class="n">best_mapping</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
@@ -528,7 +528,7 @@
                             <span class="c1"># Update the is_dead status</span>
                             <span class="k">if</span> <span class="n">is_dead</span><span class="p">:</span>
                                 <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;is_dead&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-                            <span class="c1"># Grabour current player_index from what it was the previous round to achieve color consistency</span>
+                            <span class="c1"># Grab our current player_index from what it was the previous round to achieve color consistency</span>
                             <span class="n">player_index</span> <span class="o">=</span> <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;index&quot;</span><span class="p">]</span>
                             <span class="c1"># Update our position</span>
                             <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span>
