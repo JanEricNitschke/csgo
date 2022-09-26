@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -49,10 +50,39 @@
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Analytics</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-awpy.analytics.nav">awpy.analytics.nav</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-awpy.analytics.states">awpy.analytics.states</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-awpy.analytics.stats">awpy.analytics.stats</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-awpy.analytics.wpa">awpy.analytics.wpa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#awpy-analytics-nav">awpy.analytics.nav</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.area_distance"><code class="docutils literal notranslate"><span class="pre">area_distance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.build_stepped_lower"><code class="docutils literal notranslate"><span class="pre">build_stepped_lower()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.build_stepped_upper"><code class="docutils literal notranslate"><span class="pre">build_stepped_upper()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.find_closest_area"><code class="docutils literal notranslate"><span class="pre">find_closest_area()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.frame_distance"><code class="docutils literal notranslate"><span class="pre">frame_distance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.generate_area_distance_matrix"><code class="docutils literal notranslate"><span class="pre">generate_area_distance_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.generate_centroids"><code class="docutils literal notranslate"><span class="pre">generate_centroids()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.generate_place_distance_matrix"><code class="docutils literal notranslate"><span class="pre">generate_place_distance_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.generate_position_token"><code class="docutils literal notranslate"><span class="pre">generate_position_token()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.point_distance"><code class="docutils literal notranslate"><span class="pre">point_distance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.point_in_area"><code class="docutils literal notranslate"><span class="pre">point_in_area()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.position_state_distance"><code class="docutils literal notranslate"><span class="pre">position_state_distance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.stepped_hull"><code class="docutils literal notranslate"><span class="pre">stepped_hull()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.token_distance"><code class="docutils literal notranslate"><span class="pre">token_distance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.token_state_distance"><code class="docutils literal notranslate"><span class="pre">token_state_distance()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-awpy.analytics.states">awpy.analytics.states</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.states.generate_graph_state"><code class="docutils literal notranslate"><span class="pre">generate_graph_state()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.states.generate_set_state"><code class="docutils literal notranslate"><span class="pre">generate_set_state()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.states.generate_vector_state"><code class="docutils literal notranslate"><span class="pre">generate_vector_state()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-awpy.analytics.stats">awpy.analytics.stats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.stats.player_stats"><code class="docutils literal notranslate"><span class="pre">player_stats()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-awpy.analytics.wpa">awpy.analytics.wpa</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.wpa.round_win_probability"><code class="docutils literal notranslate"><span class="pre">round_win_probability()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.wpa.state_win_probability"><code class="docutils literal notranslate"><span class="pre">state_win_probability()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
@@ -87,8 +117,8 @@
   <section id="analytics">
 <h1>Analytics<a class="headerlink" href="#analytics" title="Permalink to this heading"></a></h1>
 <p>This is the analytics module. You can use it to calculate statistics on your parsed demos, such as Rating, ADR, and so on.</p>
-<section id="module-awpy.analytics.nav">
-<span id="awpy-analytics-nav"></span><h2>awpy.analytics.nav<a class="headerlink" href="#module-awpy.analytics.nav" title="Permalink to this heading"></a></h2>
+<section id="awpy-analytics-nav">
+<h2>awpy.analytics.nav<a class="headerlink" href="#awpy-analytics-nav" title="Permalink to this heading"></a></h2>
 <p>Functions for finding distances between points, areas or states.</p>
 <p>Typical usage example:</p>
 <p>from awpy.analytics.nav import area_distance</p>
@@ -110,7 +140,7 @@ ax.add_patch(rect)</p>
 </dd>
 </dl>
 <p><a class="reference external" href="https://github.com/pnxenopoulos/awpy/blob/main/examples/03_Working_with_Navigation_Meshes.ipynb">https://github.com/pnxenopoulos/awpy/blob/main/examples/03_Working_with_Navigation_Meshes.ipynb</a></p>
-<dl class="py function">
+<span class="target" id="module-awpy.analytics.nav"></span><dl class="py function">
 <dt class="sig sig-object py" id="awpy.analytics.nav.area_distance">
 <span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">area_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'graph'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#area_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.area_distance" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the distance between two areas. Dist type can be graph or geodesic.</p>
