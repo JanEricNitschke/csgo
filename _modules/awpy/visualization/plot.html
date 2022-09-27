@@ -98,6 +98,7 @@
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 
 <span class="kn">from</span> <span class="nn">awpy.data</span> <span class="kn">import</span> <span class="n">MAP_DATA</span>
+<span class="kn">from</span> <span class="nn">awpy.analytics.nav</span> <span class="kn">import</span> <span class="n">point_distance</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="n">find_closest_area</span><span class="p">,</span> <span class="n">area_distance</span>
 
 
 <div class="viewcode-block" id="plot_map"><a class="viewcode-back" href="../../../visualization.html#awpy.visualization.plot.plot_map">[docs]</a><span class="k">def</span> <span class="nf">plot_map</span><span class="p">(</span><span class="n">map_name</span><span class="o">=</span><span class="s2">&quot;de_dust2&quot;</span><span class="p">,</span> <span class="n">map_type</span><span class="o">=</span><span class="s2">&quot;original&quot;</span><span class="p">,</span> <span class="n">dark</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -387,31 +388,66 @@
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">player</span><span class="p">[</span><span class="s2">&quot;steamID&quot;</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="get_shortest_distances_mapping"><a class="viewcode-back" href="../../../visualization.html#awpy.visualization.plot.get_shortest_distances_mapping">[docs]</a><span class="k">def</span> <span class="nf">get_shortest_distances_mapping</span><span class="p">(</span><span class="n">leaders</span><span class="p">,</span> <span class="n">current_positions</span><span class="p">):</span>
+<div class="viewcode-block" id="get_shortest_distances_mapping"><a class="viewcode-back" href="../../../visualization.html#awpy.visualization.plot.get_shortest_distances_mapping">[docs]</a><span class="k">def</span> <span class="nf">get_shortest_distances_mapping</span><span class="p">(</span>
+    <span class="n">map_name</span><span class="p">,</span> <span class="n">leaders</span><span class="p">,</span> <span class="n">current_positions</span><span class="p">,</span> <span class="n">dist_type</span><span class="o">=</span><span class="s2">&quot;geodesic&quot;</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Gets the mapping between players in the current round and lead players that has the shortest total distance between mapped players.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        leaders (dictionary): Dictionary of leaders position, alive status and color index in the current frame</span>
-<span class="sd">        current_positions (list): List of tuples of players x, y coordinates in the current round and frame</span>
+<span class="sd">        current_positions (list): List of tuples of players x, y, z coordinates in the current round and frame</span>
+<span class="sd">        dist_type (string): String indicating the type of distance to use. Can be graph, geodesic, euclidean, manhattan, canberra or cosine.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list mapping the player at index i in the current round to the leader at position list[i] in the leaders dictionary.</span>
 <span class="sd">        (Requires python 3.6 because it relies on the order of elements in the dict)&quot;&quot;&quot;</span>
     <span class="n">smallest_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
     <span class="n">best_mapping</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">dist_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span> <span class="s2">&quot;graph&quot;</span><span class="p">]:</span>
+        <span class="n">areas</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;leaders&quot;</span><span class="p">:</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
+            <span class="s2">&quot;current&quot;</span><span class="p">:</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">leader</span> <span class="ow">in</span> <span class="n">leaders</span><span class="p">:</span>
+            <span class="n">areas</span><span class="p">[</span><span class="s2">&quot;leaders&quot;</span><span class="p">][</span><span class="n">leader</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_closest_area</span><span class="p">(</span>
+                <span class="n">map_name</span><span class="p">,</span> <span class="n">leaders</span><span class="p">[</span><span class="n">leader</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span>
+            <span class="p">)[</span><span class="s2">&quot;areaId&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">player</span><span class="p">,</span> <span class="n">position</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">current_positions</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">areas</span><span class="p">[</span><span class="s2">&quot;current&quot;</span><span class="p">][</span><span class="n">player</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_closest_area</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">position</span><span class="p">)[</span><span class="s2">&quot;areaId&quot;</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">leaders</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_positions</span><span class="p">)):</span>
         <span class="n">dist</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">current_pos</span><span class="p">,</span> <span class="n">leader_pos</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mapping</span><span class="p">):</span>
             <span class="c1"># Remove dead players from consideration</span>
             <span class="k">if</span> <span class="n">current_positions</span><span class="p">[</span><span class="n">current_pos</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="n">dist</span> <span class="o">+=</span> <span class="p">(</span>
-                <span class="n">current_positions</span><span class="p">[</span><span class="n">current_pos</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="o">-</span> <span class="n">leaders</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_pos</span><span class="p">]][</span><span class="s2">&quot;pos&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span>
-                <span class="n">current_positions</span><span class="p">[</span><span class="n">current_pos</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-                <span class="o">-</span> <span class="n">leaders</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_pos</span><span class="p">]][</span><span class="s2">&quot;pos&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-            <span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="n">dist_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span> <span class="s2">&quot;graph&quot;</span><span class="p">]:</span>
+                <span class="n">this_dist</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+                    <span class="n">area_distance</span><span class="p">(</span>
+                        <span class="n">map_name</span><span class="p">,</span>
+                        <span class="n">areas</span><span class="p">[</span><span class="s2">&quot;leaders&quot;</span><span class="p">][</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_pos</span><span class="p">]],</span>
+                        <span class="n">areas</span><span class="p">[</span><span class="s2">&quot;current&quot;</span><span class="p">][</span><span class="n">current_pos</span><span class="p">],</span>
+                        <span class="n">dist_type</span><span class="o">=</span><span class="n">dist_type</span><span class="p">,</span>
+                        <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="p">)[</span><span class="s2">&quot;distance&quot;</span><span class="p">],</span>
+                    <span class="n">area_distance</span><span class="p">(</span>
+                        <span class="n">map_name</span><span class="p">,</span>
+                        <span class="n">areas</span><span class="p">[</span><span class="s2">&quot;current&quot;</span><span class="p">][</span><span class="n">current_pos</span><span class="p">],</span>
+                        <span class="n">areas</span><span class="p">[</span><span class="s2">&quot;leaders&quot;</span><span class="p">][</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_pos</span><span class="p">]],</span>
+                        <span class="n">dist_type</span><span class="o">=</span><span class="n">dist_type</span><span class="p">,</span>
+                        <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="p">)[</span><span class="s2">&quot;distance&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">this_dist</span> <span class="o">=</span> <span class="n">point_distance</span><span class="p">(</span>
+                    <span class="n">map_name</span><span class="p">,</span>
+                    <span class="n">current_positions</span><span class="p">[</span><span class="n">current_pos</span><span class="p">],</span>
+                    <span class="n">leaders</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_pos</span><span class="p">]][</span><span class="s2">&quot;pos&quot;</span><span class="p">],</span>
+                    <span class="n">dist_type</span><span class="p">,</span>
+                    <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span>
+            <span class="n">dist</span> <span class="o">+=</span> <span class="n">this_dist</span>
         <span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;</span> <span class="n">smallest_distance</span><span class="p">:</span>
             <span class="n">smallest_distance</span> <span class="o">=</span> <span class="n">dist</span>
             <span class="n">best_mapping</span> <span class="o">=</span> <span class="n">mapping</span>
@@ -419,21 +455,6 @@
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">leader_pos</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">best_mapping</span><span class="p">):</span>
         <span class="n">best_mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_pos</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">best_mapping</span></div>
-
-
-<div class="viewcode-block" id="tree"><a class="viewcode-back" href="../../../visualization.html#awpy.visualization.plot.tree">[docs]</a><span class="k">def</span> <span class="nf">tree</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Builds tree data structure from nested defaultdicts</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        None</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        An empty tree&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">the_tree</span><span class="p">():</span>
-        <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="n">the_tree</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">the_tree</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="plot_rounds_different_players"><a class="viewcode-back" href="../../../visualization.html#awpy.visualization.plot.plot_rounds_different_players">[docs]</a><span class="k">def</span> <span class="nf">plot_rounds_different_players</span><span class="p">(</span>
@@ -445,6 +466,7 @@
     <span class="n">sides</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">fps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
     <span class="n">n_frames</span><span class="o">=</span><span class="mi">9000</span><span class="p">,</span>
+    <span class="n">dist_type</span><span class="o">=</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plots a list of rounds and saves as a .gif. Each player in the first round is assigned a separate color. Players in the other rounds are matched by proximity.</span>
 <span class="sd">     Only use untransformed coordinates.</span>
@@ -458,6 +480,7 @@
 <span class="sd">        sides (list): List of which sides to plots. Possible entries at &quot;t&quot; and &quot;ct&quot;</span>
 <span class="sd">        fps (integer): Number of frames per second in the gif</span>
 <span class="sd">        n_frames (integer): The first how many frames should be plotted</span>
+<span class="sd">        dist_type (string): String indicating the type of distance to use. Can be graph, geodesic, euclidean, manhattan, canberra or cosine.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        True, saves .gif</span>
@@ -515,8 +538,9 @@
                             <span class="p">):</span>
                                 <span class="k">continue</span>
                             <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
-                                <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
-                                <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span>
+                                <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span>
+                                <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span>
+                                <span class="n">p</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">],</span>
                             <span class="p">)</span>
                             <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;hp&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                                 <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;is_dead&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
@@ -537,8 +561,9 @@
                         <span class="n">current_positions</span> <span class="o">=</span> <span class="p">[]</span>
                         <span class="k">for</span> <span class="n">player_index</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="s2">&quot;players&quot;</span><span class="p">]):</span>
                             <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
-                                <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
-                                <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span>
+                                <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span>
+                                <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span>
+                                <span class="n">p</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">],</span>
                             <span class="p">)</span>
                             <span class="c1"># Remove dead players from consideration</span>
                             <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;hp&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -547,7 +572,10 @@
                                 <span class="n">current_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
                         <span class="c1"># Find the best mapping between current players and leaders</span>
                         <span class="n">mapping</span> <span class="o">=</span> <span class="n">get_shortest_distances_mapping</span><span class="p">(</span>
-                            <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">],</span> <span class="n">current_positions</span>
+                            <span class="n">map_name</span><span class="p">,</span>
+                            <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">],</span>
+                            <span class="n">current_positions</span><span class="p">,</span>
+                            <span class="n">dist_type</span><span class="o">=</span><span class="n">dist_type</span><span class="p">,</span>
                         <span class="p">)</span>
                     <span class="c1"># Now do the actual plotting</span>
                     <span class="k">for</span> <span class="n">player_index</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="s2">&quot;players&quot;</span><span class="p">]):</span>
@@ -555,8 +583,9 @@
                             <span class="n">get_player_id</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">frame_index</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">side</span>
                         <span class="p">)</span>
                         <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
-                            <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span>
+                            <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span>
+                            <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span>
+                            <span class="n">p</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">],</span>
                         <span class="p">)</span>
 
                         <span class="n">is_dead</span> <span class="o">=</span> <span class="kc">False</span>
@@ -653,6 +682,7 @@
             <span class="n">map_name</span><span class="o">=</span><span class="n">map_name</span><span class="p">,</span>
             <span class="n">map_type</span><span class="o">=</span><span class="n">map_type</span><span class="p">,</span>
             <span class="n">dark</span><span class="o">=</span><span class="n">dark</span><span class="p">,</span>
+            <span class="n">apply_transformation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">image_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;csgo_tmp/</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">image_files</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
@@ -661,7 +691,7 @@
     <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">image_files</span><span class="p">:</span>
         <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
     <span class="n">imageio</span><span class="o">.</span><span class="n">mimsave</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="n">fps</span><span class="p">)</span>
-    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="s2">&quot;csgo_tmp/&quot;</span><span class="p">)</span>
+    <span class="c1"># shutil.rmtree(&quot;csgo_tmp/&quot;)</span>
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
@@ -673,6 +703,7 @@
     <span class="n">dark</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">sides</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">n_frames</span><span class="o">=</span><span class="mi">9000</span><span class="p">,</span>
+    <span class="n">dist_type</span><span class="o">=</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plots a list of rounds and saves as a .gif. Each player in the first round is assigned a separate color. Players in the other rounds are matched by proximity.</span>
 <span class="sd">     Only use untransformed coordinates.</span>
@@ -685,6 +716,7 @@
 <span class="sd">        dark (boolean): Only for use with map_type=&quot;simpleradar&quot;. Indicates if you want to use the SimpleRadar dark map type</span>
 <span class="sd">        sides (list): List of which sides to plots. Possible entries at &quot;t&quot; and &quot;ct&quot;</span>
 <span class="sd">        n_frames (integer): The first how many frames should be plotted</span>
+<span class="sd">        dist_type (string): String indicating the type of distance to use. Can be graph, geodesic, euclidean, manhattan, canberra or cosine.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        True, saves .gif</span>
@@ -729,8 +761,9 @@
                             <span class="p">):</span>
                                 <span class="k">continue</span>
                             <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
-                                <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
-                                <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span>
+                                <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span>
+                                <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span>
+                                <span class="n">p</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">],</span>
                             <span class="p">)</span>
                             <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;hp&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                                 <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">][</span><span class="n">player_id</span><span class="p">][</span><span class="s2">&quot;is_dead&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
@@ -746,8 +779,9 @@
                         <span class="n">current_positions</span> <span class="o">=</span> <span class="p">[]</span>
                         <span class="k">for</span> <span class="n">player_index</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="s2">&quot;players&quot;</span><span class="p">]):</span>
                             <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
-                                <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
-                                <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span>
+                                <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span>
+                                <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span>
+                                <span class="n">p</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">],</span>
                             <span class="p">)</span>
                             <span class="c1"># Remove dead players from consideration</span>
                             <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;hp&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -756,14 +790,18 @@
                                 <span class="n">current_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
                         <span class="c1"># Find the best mapping between current players and leaders</span>
                         <span class="n">mapping</span> <span class="o">=</span> <span class="n">get_shortest_distances_mapping</span><span class="p">(</span>
-                            <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">],</span> <span class="n">current_positions</span>
+                            <span class="n">map_name</span><span class="p">,</span>
+                            <span class="n">leaders</span><span class="p">[</span><span class="n">side</span><span class="p">],</span>
+                            <span class="n">current_positions</span><span class="p">,</span>
+                            <span class="n">dist_type</span><span class="o">=</span><span class="n">dist_type</span><span class="p">,</span>
                         <span class="p">)</span>
                     <span class="c1"># Now do the actual plotting</span>
                     <span class="k">for</span> <span class="n">player_index</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="s2">&quot;players&quot;</span><span class="p">]):</span>
                         <span class="n">player_id</span> <span class="o">=</span> <span class="n">get_player_id</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">frame_index</span><span class="p">)</span>
                         <span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">),</span>
-                            <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">),</span>
+                            <span class="n">p</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span>
+                            <span class="n">p</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span>
+                            <span class="n">p</span><span class="p">[</span><span class="s2">&quot;z&quot;</span><span class="p">],</span>
                         <span class="p">)</span>
 
                         <span class="n">is_dead</span> <span class="o">=</span> <span class="kc">False</span>
@@ -825,8 +863,14 @@
         <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="n">frame_positions</span><span class="p">[</span><span class="n">frame</span><span class="p">]:</span>
             <span class="k">for</span> <span class="n">player</span> <span class="ow">in</span> <span class="n">frame_positions</span><span class="p">[</span><span class="n">frame</span><span class="p">][</span><span class="n">side</span><span class="p">]:</span>
                 <span class="n">a</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-                    <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">frame_positions</span><span class="p">[</span><span class="n">frame</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="n">player</span><span class="p">]],</span>
-                    <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">frame_positions</span><span class="p">[</span><span class="n">frame</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="n">player</span><span class="p">]],</span>
+                    <span class="p">[</span>
+                        <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">frame_positions</span><span class="p">[</span><span class="n">frame</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="n">player</span><span class="p">]</span>
+                    <span class="p">],</span>
+                    <span class="p">[</span>
+                        <span class="n">position_transform</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">frame_positions</span><span class="p">[</span><span class="n">frame</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="n">player</span><span class="p">]</span>
+                    <span class="p">],</span>
                     <span class="n">c</span><span class="o">=</span><span class="n">frame_colors</span><span class="p">[</span><span class="n">frame</span><span class="p">][</span><span class="n">side</span><span class="p">][</span><span class="n">player</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
                     <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span>
                     <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>

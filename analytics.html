@@ -50,7 +50,7 @@
 <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Analytics</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#awpy-analytics-nav">awpy.analytics.nav</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-awpy.analytics.nav">awpy.analytics.nav</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.area_distance"><code class="docutils literal notranslate"><span class="pre">area_distance()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.build_stepped_lower"><code class="docutils literal notranslate"><span class="pre">build_stepped_lower()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.build_stepped_upper"><code class="docutils literal notranslate"><span class="pre">build_stepped_upper()</span></code></a></li>
@@ -66,6 +66,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.stepped_hull"><code class="docutils literal notranslate"><span class="pre">stepped_hull()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.token_distance"><code class="docutils literal notranslate"><span class="pre">token_distance()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.token_state_distance"><code class="docutils literal notranslate"><span class="pre">token_state_distance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.tree"><code class="docutils literal notranslate"><span class="pre">tree()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-awpy.analytics.states">awpy.analytics.states</a><ul>
@@ -117,8 +118,8 @@
   <section id="analytics">
 <h1>Analytics<a class="headerlink" href="#analytics" title="Permalink to this heading"></a></h1>
 <p>This is the analytics module. You can use it to calculate statistics on your parsed demos, such as Rating, ADR, and so on.</p>
-<section id="awpy-analytics-nav">
-<h2>awpy.analytics.nav<a class="headerlink" href="#awpy-analytics-nav" title="Permalink to this heading"></a></h2>
+<section id="module-awpy.analytics.nav">
+<span id="awpy-analytics-nav"></span><h2>awpy.analytics.nav<a class="headerlink" href="#module-awpy.analytics.nav" title="Permalink to this heading"></a></h2>
 <p>Functions for finding distances between points, areas or states.</p>
 <p>Typical usage example:</p>
 <p>from awpy.analytics.nav import area_distance</p>
@@ -140,9 +141,9 @@ ax.add_patch(rect)</p>
 </dd>
 </dl>
 <p><a class="reference external" href="https://github.com/pnxenopoulos/awpy/blob/main/examples/03_Working_with_Navigation_Meshes.ipynb">https://github.com/pnxenopoulos/awpy/blob/main/examples/03_Working_with_Navigation_Meshes.ipynb</a></p>
-<span class="target" id="module-awpy.analytics.nav"></span><dl class="py function">
+<dl class="py function">
 <dt class="sig sig-object py" id="awpy.analytics.nav.area_distance">
-<span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">area_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'graph'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#area_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.area_distance" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">area_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'graph'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#area_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.area_distance" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the distance between two areas. Dist type can be graph or geodesic.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -151,6 +152,7 @@ ax.add_patch(rect)</p>
 <li><p><strong>area_a</strong> (<em>int</em>) – Area id</p></li>
 <li><p><strong>area_b</strong> (<em>int</em>) – Area id</p></li>
 <li><p><strong>dist_type</strong> (<em>string</em>) – String indicating the type of distance to use (graph, geodesic or euclidean)</p></li>
+<li><p><strong>fast</strong> (<em>boolean</em>) – Boolean indicating whether the distance should be tried to be grabbed from precomputed matrices. In that case the traversed areas are not available.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -298,7 +300,7 @@ Structures is [map_name][placeid][place2id][dist_type(euclidean,graph,geodesic)]
 
 <dl class="py function">
 <dt class="sig sig-object py" id="awpy.analytics.nav.point_distance">
-<span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">point_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'graph'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#point_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.point_distance" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">point_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'graph'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#point_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.point_distance" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the distance between two points.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -307,6 +309,7 @@ Structures is [map_name][placeid][place2id][dist_type(euclidean,graph,geodesic)]
 <li><p><strong>point_a</strong> (<em>list</em>) – Point as a list (x,y,z)</p></li>
 <li><p><strong>point_b</strong> (<em>list</em>) – Point as a list (x,y,z)</p></li>
 <li><p><strong>dist_type</strong> (<em>string</em>) – String indicating the type of distance to use. Can be graph, geodesic, euclidean, manhattan, canberra or cosine.</p></li>
+<li><p><strong>fast</strong> (<em>boolean</em>) – Boolean indicating whether the distance should be tried to be grabbed from precomputed matrices. In that case the traversed areas are not available.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -402,6 +405,20 @@ Structures is [map_name][placeid][place2id][dist_type(euclidean,graph,geodesic)]
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A float representing the distance between these two game states</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="awpy.analytics.nav.tree">
+<span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">tree</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.tree" title="Permalink to this definition"></a></dt>
+<dd><p>Builds tree data structure from nested defaultdicts</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An empty tree</p>
 </dd>
 </dl>
 </dd></dl>

@@ -52,7 +52,7 @@
 <li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="parser.html">Parser</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Visualization</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#awpy-visualization-plot">awpy.visualization.plot</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-awpy.visualization.plot">awpy.visualization.plot</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.visualization.plot.get_player_id"><code class="docutils literal notranslate"><span class="pre">get_player_id()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.visualization.plot.get_shortest_distances_mapping"><code class="docutils literal notranslate"><span class="pre">get_shortest_distances_mapping()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.visualization.plot.plot_map"><code class="docutils literal notranslate"><span class="pre">plot_map()</span></code></a></li>
@@ -64,7 +64,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#awpy.visualization.plot.plot_rounds_same_players"><code class="docutils literal notranslate"><span class="pre">plot_rounds_same_players()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.visualization.plot.position_transform"><code class="docutils literal notranslate"><span class="pre">position_transform()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.visualization.plot.position_transform_all"><code class="docutils literal notranslate"><span class="pre">position_transform_all()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#awpy.visualization.plot.tree"><code class="docutils literal notranslate"><span class="pre">tree()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -98,14 +97,14 @@
   <section id="visualization">
 <h1>Visualization<a class="headerlink" href="#visualization" title="Permalink to this heading"></a></h1>
 <p>This module contains functions for visualization.</p>
-<section id="awpy-visualization-plot">
-<h2>awpy.visualization.plot<a class="headerlink" href="#awpy-visualization-plot" title="Permalink to this heading"></a></h2>
+<section id="module-awpy.visualization.plot">
+<span id="awpy-visualization-plot"></span><h2>awpy.visualization.plot<a class="headerlink" href="#module-awpy.visualization.plot" title="Permalink to this heading"></a></h2>
 <p>Functions for plotting player positions and nades.</p>
 <p>Typical usage example:</p>
 <p>from awpy.visualization.plot import plot_round
 plot_round(“best_round_ever.gif”, d[“gameRounds”][7][“frames”], map_name=d[“mapName”], map_type=”simpleradar”, dark=False)</p>
 <p><a class="reference external" href="https://github.com/pnxenopoulos/awpy/blob/main/examples/02_Basic_CSGO_Visualization.ipynb">https://github.com/pnxenopoulos/awpy/blob/main/examples/02_Basic_CSGO_Visualization.ipynb</a></p>
-<span class="target" id="module-awpy.visualization.plot"></span><dl class="py function">
+<dl class="py function">
 <dt class="sig sig-object py" id="awpy.visualization.plot.get_player_id">
 <span class="sig-prename descclassname"><span class="pre">awpy.visualization.plot.</span></span><span class="sig-name descname"><span class="pre">get_player_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/visualization/plot.html#get_player_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.visualization.plot.get_player_id" title="Permalink to this definition"></a></dt>
 <dd><p>Extracts a players steamID from their player dictionary in a given frame.</p>
@@ -124,13 +123,14 @@ To avoid overlap bots are instead identified by their name which is unique in an
 
 <dl class="py function">
 <dt class="sig sig-object py" id="awpy.visualization.plot.get_shortest_distances_mapping">
-<span class="sig-prename descclassname"><span class="pre">awpy.visualization.plot.</span></span><span class="sig-name descname"><span class="pre">get_shortest_distances_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">leaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_positions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/visualization/plot.html#get_shortest_distances_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.visualization.plot.get_shortest_distances_mapping" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">awpy.visualization.plot.</span></span><span class="sig-name descname"><span class="pre">get_shortest_distances_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leaders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'geodesic'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/visualization/plot.html#get_shortest_distances_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.visualization.plot.get_shortest_distances_mapping" title="Permalink to this definition"></a></dt>
 <dd><p>Gets the mapping between players in the current round and lead players that has the shortest total distance between mapped players.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>leaders</strong> (<em>dictionary</em>) – Dictionary of leaders position, alive status and color index in the current frame</p></li>
-<li><p><strong>current_positions</strong> (<em>list</em>) – List of tuples of players x, y coordinates in the current round and frame</p></li>
+<li><p><strong>current_positions</strong> (<em>list</em>) – List of tuples of players x, y, z coordinates in the current round and frame</p></li>
+<li><p><strong>dist_type</strong> (<em>string</em>) – String indicating the type of distance to use. Can be graph, geodesic, euclidean, manhattan, canberra or cosine.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -226,7 +226,7 @@ To avoid overlap bots are instead identified by their name which is unique in an
 
 <dl class="py function">
 <dt class="sig sig-object py" id="awpy.visualization.plot.plot_rounds_different_players">
-<span class="sig-prename descclassname"><span class="pre">awpy.visualization.plot.</span></span><span class="sig-name descname"><span class="pre">plot_rounds_different_players</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'de_ancient'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/visualization/plot.html#plot_rounds_different_players"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.visualization.plot.plot_rounds_different_players" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">awpy.visualization.plot.</span></span><span class="sig-name descname"><span class="pre">plot_rounds_different_players</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'de_ancient'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'geodesic'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/visualization/plot.html#plot_rounds_different_players"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.visualization.plot.plot_rounds_different_players" title="Permalink to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Plots a list of rounds and saves as a .gif. Each player in the first round is assigned a separate color. Players in the other rounds are matched by proximity.</dt><dd><p>Only use untransformed coordinates.</p>
 </dd>
@@ -242,6 +242,7 @@ To avoid overlap bots are instead identified by their name which is unique in an
 <li><p><strong>sides</strong> (<em>list</em>) – List of which sides to plots. Possible entries at “t” and “ct”</p></li>
 <li><p><strong>fps</strong> (<em>integer</em>) – Number of frames per second in the gif</p></li>
 <li><p><strong>n_frames</strong> (<em>integer</em>) – The first how many frames should be plotted</p></li>
+<li><p><strong>dist_type</strong> (<em>string</em>) – String indicating the type of distance to use. Can be graph, geodesic, euclidean, manhattan, canberra or cosine.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -252,7 +253,7 @@ To avoid overlap bots are instead identified by their name which is unique in an
 
 <dl class="py function">
 <dt class="sig sig-object py" id="awpy.visualization.plot.plot_rounds_different_players_image">
-<span class="sig-prename descclassname"><span class="pre">awpy.visualization.plot.</span></span><span class="sig-name descname"><span class="pre">plot_rounds_different_players_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'de_ancient'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/visualization/plot.html#plot_rounds_different_players_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.visualization.plot.plot_rounds_different_players_image" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">awpy.visualization.plot.</span></span><span class="sig-name descname"><span class="pre">plot_rounds_different_players_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'de_ancient'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'original'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'geodesic'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/visualization/plot.html#plot_rounds_different_players_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.visualization.plot.plot_rounds_different_players_image" title="Permalink to this definition"></a></dt>
 <dd><dl class="simple">
 <dt>Plots a list of rounds and saves as a .gif. Each player in the first round is assigned a separate color. Players in the other rounds are matched by proximity.</dt><dd><p>Only use untransformed coordinates.</p>
 </dd>
@@ -267,6 +268,7 @@ To avoid overlap bots are instead identified by their name which is unique in an
 <li><p><strong>dark</strong> (<em>boolean</em>) – Only for use with map_type=”simpleradar”. Indicates if you want to use the SimpleRadar dark map type</p></li>
 <li><p><strong>sides</strong> (<em>list</em>) – List of which sides to plots. Possible entries at “t” and “ct”</p></li>
 <li><p><strong>n_frames</strong> (<em>integer</em>) – The first how many frames should be plotted</p></li>
+<li><p><strong>dist_type</strong> (<em>string</em>) – String indicating the type of distance to use. Can be graph, geodesic, euclidean, manhattan, canberra or cosine.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -331,20 +333,6 @@ To avoid overlap bots are instead identified by their name which is unique in an
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>tuple</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="awpy.visualization.plot.tree">
-<span class="sig-prename descclassname"><span class="pre">awpy.visualization.plot.</span></span><span class="sig-name descname"><span class="pre">tree</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/visualization/plot.html#tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.visualization.plot.tree" title="Permalink to this definition"></a></dt>
-<dd><p>Builds tree data structure from nested defaultdicts</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>None</strong> – </p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An empty tree</p>
 </dd>
 </dl>
 </dd></dl>
