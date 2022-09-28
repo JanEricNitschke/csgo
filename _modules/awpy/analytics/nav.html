@@ -105,10 +105,11 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">statistics</span> <span class="kn">import</span> <span class="n">mean</span><span class="p">,</span> <span class="n">median</span>
 <span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">sympy.utilities.iterables</span> <span class="kn">import</span> <span class="n">multiset_permutations</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">from</span> <span class="nn">awpy.data</span> <span class="kn">import</span> <span class="n">NAV</span><span class="p">,</span> <span class="n">NAV_GRAPHS</span><span class="p">,</span> <span class="n">AREA_DIST_MATRIX</span><span class="p">,</span> <span class="n">PLACE_DIST_MATRIX</span><span class="p">,</span> <span class="n">PATH</span>
 <span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">distance</span>
 <span class="kn">from</span> <span class="nn">shapely.geometry</span> <span class="kn">import</span> <span class="n">Polygon</span>
@@ -1010,6 +1011,55 @@
         <span class="n">distance_type</span><span class="p">,</span>
         <span class="n">reference_point</span><span class="p">,</span>
     <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="trajectory_distance"><a class="viewcode-back" href="../../../analytics.html#awpy.analytics.nav.trajectory_distance">[docs]</a><span class="k">def</span> <span class="nf">trajectory_distance</span><span class="p">(</span>
+    <span class="n">map_name</span><span class="p">,</span>
+    <span class="n">trajectory_array_1</span><span class="p">,</span>
+    <span class="n">trajectory_array_2</span><span class="p">,</span>
+    <span class="n">distance_type</span><span class="o">=</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates a distance distance between two trajectories</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        trajectory_array_1: Numpy array with shape (n_Time,2|1, 5, 3) with the first index indicating the team, the second the player and the third the coordinate</span>
+<span class="sd">        trajectory_array_2: Numpy array with shape (n_Time,2|1, 5, 3) with the first index indicating the team, the second the player and the third the coordinate</span>
+<span class="sd">        distance_type: String indicating how the distance between two player positions should be calculated. Options are &quot;geodesic&quot;, &quot;graph&quot;, &quot;euclidean&quot; and &quot;edit_distance&quot;</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A float representing the distance between these two trajectories</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory_array_1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">trajectory_array_2</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trajectory_array_1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">2.5</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="n">position_state_distance</span><span class="p">(</span>
+                    <span class="n">map_name</span><span class="o">=</span><span class="n">map_name</span><span class="p">,</span>
+                    <span class="n">position_array_1</span><span class="o">=</span><span class="n">trajectory_array_1</span><span class="p">[</span><span class="n">time</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">time</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory_array_1</span><span class="p">))</span>
+                    <span class="k">else</span> <span class="n">trajectory_array_1</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">position_array_2</span><span class="o">=</span><span class="n">trajectory_array_2</span><span class="p">[</span><span class="n">time</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">time</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory_array_2</span><span class="p">))</span>
+                    <span class="k">else</span> <span class="n">trajectory_array_2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">distance_type</span><span class="o">=</span><span class="n">distance_type</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="o">/</span> <span class="n">length</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="n">token_state_distance</span><span class="p">(</span>
+                    <span class="n">map_name</span><span class="o">=</span><span class="n">map_name</span><span class="p">,</span>
+                    <span class="n">token_array_1</span><span class="o">=</span><span class="n">trajectory_array_1</span><span class="p">[</span><span class="n">time</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">time</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory_array_1</span><span class="p">))</span>
+                    <span class="k">else</span> <span class="n">trajectory_array_1</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">token_array_2</span><span class="o">=</span><span class="n">trajectory_array_2</span><span class="p">[</span><span class="n">time</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">time</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trajectory_array_2</span><span class="p">))</span>
+                    <span class="k">else</span> <span class="n">trajectory_array_2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">distance_type</span><span class="o">=</span><span class="n">distance_type</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="o">/</span> <span class="n">length</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">dist</span></div>
 </pre></div>
 
            </div>

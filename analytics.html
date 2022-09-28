@@ -66,6 +66,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.stepped_hull"><code class="docutils literal notranslate"><span class="pre">stepped_hull()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.token_distance"><code class="docutils literal notranslate"><span class="pre">token_distance()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.token_state_distance"><code class="docutils literal notranslate"><span class="pre">token_state_distance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.trajectory_distance"><code class="docutils literal notranslate"><span class="pre">trajectory_distance()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.tree"><code class="docutils literal notranslate"><span class="pre">tree()</span></code></a></li>
 </ul>
 </li>
@@ -405,6 +406,24 @@ Structures is [map_name][placeid][place2id][dist_type(euclidean,graph,geodesic)]
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A float representing the distance between these two game states</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="awpy.analytics.nav.trajectory_distance">
+<span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">trajectory_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_array_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_array_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'geodesic'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#trajectory_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.trajectory_distance" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates a distance distance between two trajectories</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trajectory_array_1</strong> – Numpy array with shape (n_Time,2|1, 5, 3) with the first index indicating the team, the second the player and the third the coordinate</p></li>
+<li><p><strong>trajectory_array_2</strong> – Numpy array with shape (n_Time,2|1, 5, 3) with the first index indicating the team, the second the player and the third the coordinate</p></li>
+<li><p><strong>distance_type</strong> – String indicating how the distance between two player positions should be calculated. Options are “geodesic”, “graph”, “euclidean” and “edit_distance”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A float representing the distance between these two trajectories</p>
 </dd>
 </dl>
 </dd></dl>
