@@ -395,7 +395,12 @@
 
 
 <div class="viewcode-block" id="get_shortest_distances_mapping"><a class="viewcode-back" href="../../../visualization.html#awpy.visualization.plot.get_shortest_distances_mapping">[docs]</a><span class="k">def</span> <span class="nf">get_shortest_distances_mapping</span><span class="p">(</span>
-    <span class="n">map_name</span><span class="p">,</span> <span class="n">leaders</span><span class="p">,</span> <span class="n">current_positions</span><span class="p">,</span> <span class="n">dist_type</span><span class="o">=</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span> <span class="n">trajectory</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">map_name</span><span class="p">,</span>
+    <span class="n">leaders</span><span class="p">,</span>
+    <span class="n">current_positions</span><span class="p">,</span>
+    <span class="n">dist_type</span><span class="o">=</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span>
+    <span class="n">trajectory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">precomputed_areas</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Gets the mapping between players in the current round and lead players that has the shortest total distance between mapped players.</span>
 
@@ -404,7 +409,7 @@
 <span class="sd">        current_positions (list): List of tuples of players x, y, z coordinates in the current round and frame</span>
 <span class="sd">        dist_type (string): String indicating the type of distance to use. Can be graph, geodesic, euclidean, manhattan, canberra or cosine.</span>
 <span class="sd">        trajectory (boolean): Boolean indicating whether the input contains full trajectories</span>
-
+<span class="sd">        precomputed_areas (boolean): Indicates whether the position arrays already contain the precomputed areas in the x coordinate of the position</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list mapping the player at index i in the current round to the leader at position list[i] in the leaders dictionary.</span>
@@ -436,6 +441,7 @@
                     <span class="n">current_positions</span><span class="p">[</span><span class="n">current_i</span><span class="p">],</span>
                     <span class="n">leaders</span><span class="p">[</span><span class="n">leader_i</span><span class="p">],</span>
                     <span class="n">distance_type</span><span class="o">=</span><span class="n">dist_type</span><span class="p">,</span>
+                    <span class="n">precomputed_areas</span><span class="o">=</span><span class="n">precomputed_areas</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">dist_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span> <span class="s2">&quot;graph&quot;</span><span class="p">]:</span>
