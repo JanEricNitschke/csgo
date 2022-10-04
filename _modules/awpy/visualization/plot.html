@@ -400,7 +400,6 @@
     <span class="n">current_positions</span><span class="p">,</span>
     <span class="n">dist_type</span><span class="o">=</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span>
     <span class="n">trajectory</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">precomputed_areas</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Gets the mapping between players in the current round and lead players that has the shortest total distance between mapped players.</span>
 
@@ -416,19 +415,6 @@
 <span class="sd">        (Requires python 3.6 because it relies on the order of elements in the dict)&quot;&quot;&quot;</span>
     <span class="n">smallest_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
     <span class="n">best_mapping</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">dist_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span> <span class="s2">&quot;graph&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">trajectory</span><span class="p">:</span>
-        <span class="n">areas</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;leaders&quot;</span><span class="p">:</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
-            <span class="s2">&quot;current&quot;</span><span class="p">:</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
-        <span class="p">}</span>
-        <span class="k">for</span> <span class="n">leader</span> <span class="ow">in</span> <span class="n">leaders</span><span class="p">:</span>
-            <span class="n">areas</span><span class="p">[</span><span class="s2">&quot;leaders&quot;</span><span class="p">][</span><span class="n">leader</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_closest_area</span><span class="p">(</span>
-                <span class="n">map_name</span><span class="p">,</span> <span class="n">leaders</span><span class="p">[</span><span class="n">leader</span><span class="p">][</span><span class="s2">&quot;pos&quot;</span><span class="p">]</span>
-            <span class="p">)[</span><span class="s2">&quot;areaId&quot;</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">player</span><span class="p">,</span> <span class="n">position</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">current_positions</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="n">areas</span><span class="p">[</span><span class="s2">&quot;current&quot;</span><span class="p">][</span><span class="n">player</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_closest_area</span><span class="p">(</span><span class="n">map_name</span><span class="p">,</span> <span class="n">position</span><span class="p">)[</span><span class="s2">&quot;areaId&quot;</span><span class="p">]</span>
     <span class="c1"># Get all distance pairs</span>
     <span class="n">distance_pairs</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">float</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">leader_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">leaders</span><span class="p">)):</span>
@@ -441,22 +427,21 @@
                     <span class="n">current_positions</span><span class="p">[</span><span class="n">current_i</span><span class="p">],</span>
                     <span class="n">leaders</span><span class="p">[</span><span class="n">leader_i</span><span class="p">],</span>
                     <span class="n">distance_type</span><span class="o">=</span><span class="n">dist_type</span><span class="p">,</span>
-                    <span class="n">precomputed_areas</span><span class="o">=</span><span class="n">precomputed_areas</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">dist_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span> <span class="s2">&quot;graph&quot;</span><span class="p">]:</span>
                     <span class="n">this_dist</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
                         <span class="n">area_distance</span><span class="p">(</span>
                             <span class="n">map_name</span><span class="p">,</span>
-                            <span class="n">areas</span><span class="p">[</span><span class="s2">&quot;leaders&quot;</span><span class="p">][</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_i</span><span class="p">]],</span>
-                            <span class="n">areas</span><span class="p">[</span><span class="s2">&quot;current&quot;</span><span class="p">][</span><span class="n">current_i</span><span class="p">],</span>
+                            <span class="n">leaders</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_i</span><span class="p">]][</span><span class="s2">&quot;pos&quot;</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                            <span class="n">current_positions</span><span class="p">[</span><span class="n">current_i</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
                             <span class="n">dist_type</span><span class="o">=</span><span class="n">dist_type</span><span class="p">,</span>
                             <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                         <span class="p">)[</span><span class="s2">&quot;distance&quot;</span><span class="p">],</span>
                         <span class="n">area_distance</span><span class="p">(</span>
                             <span class="n">map_name</span><span class="p">,</span>
-                            <span class="n">areas</span><span class="p">[</span><span class="s2">&quot;current&quot;</span><span class="p">][</span><span class="n">current_i</span><span class="p">],</span>
-                            <span class="n">areas</span><span class="p">[</span><span class="s2">&quot;leaders&quot;</span><span class="p">][</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_i</span><span class="p">]],</span>
+                            <span class="n">current_positions</span><span class="p">[</span><span class="n">current_i</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
+                            <span class="n">leaders</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_i</span><span class="p">]][</span><span class="s2">&quot;pos&quot;</span><span class="p">][</span><span class="mi">3</span><span class="p">],</span>
                             <span class="n">dist_type</span><span class="o">=</span><span class="n">dist_type</span><span class="p">,</span>
                             <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                         <span class="p">)[</span><span class="s2">&quot;distance&quot;</span><span class="p">],</span>
@@ -464,8 +449,8 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">this_dist</span> <span class="o">=</span> <span class="n">point_distance</span><span class="p">(</span>
                         <span class="n">map_name</span><span class="p">,</span>
-                        <span class="n">current_positions</span><span class="p">[</span><span class="n">current_i</span><span class="p">],</span>
-                        <span class="n">leaders</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_i</span><span class="p">]][</span><span class="s2">&quot;pos&quot;</span><span class="p">],</span>
+                        <span class="n">current_positions</span><span class="p">[</span><span class="n">current_i</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span>
+                        <span class="n">leaders</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">leaders</span><span class="p">)[</span><span class="n">leader_i</span><span class="p">]][</span><span class="s2">&quot;pos&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span>
                         <span class="n">dist_type</span><span class="p">,</span>
                         <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="p">)[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span>
