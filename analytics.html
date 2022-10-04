@@ -66,7 +66,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.stepped_hull"><code class="docutils literal notranslate"><span class="pre">stepped_hull()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.token_distance"><code class="docutils literal notranslate"><span class="pre">token_distance()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.token_state_distance"><code class="docutils literal notranslate"><span class="pre">token_state_distance()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.trajectory_distance"><code class="docutils literal notranslate"><span class="pre">trajectory_distance()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#awpy.analytics.nav.tree"><code class="docutils literal notranslate"><span class="pre">tree()</span></code></a></li>
 </ul>
 </li>
@@ -144,7 +143,7 @@ ax.add_patch(rect)</p>
 <p><a class="reference external" href="https://github.com/pnxenopoulos/awpy/blob/main/examples/03_Working_with_Navigation_Meshes.ipynb">https://github.com/pnxenopoulos/awpy/blob/main/examples/03_Working_with_Navigation_Meshes.ipynb</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="awpy.analytics.nav.area_distance">
-<span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">area_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'graph'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#area_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.area_distance" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">area_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'graph'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#area_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.area_distance" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the distance between two areas. Dist type can be graph or geodesic.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -153,7 +152,6 @@ ax.add_patch(rect)</p>
 <li><p><strong>area_a</strong> (<em>int</em>) – Area id</p></li>
 <li><p><strong>area_b</strong> (<em>int</em>) – Area id</p></li>
 <li><p><strong>dist_type</strong> (<em>string</em>) – String indicating the type of distance to use (graph, geodesic or euclidean)</p></li>
-<li><p><strong>fast</strong> (<em>boolean</em>) – Boolean indicating whether the distance should be tried to be grabbed from precomputed matrices. In that case the traversed areas are not available.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -301,7 +299,7 @@ Structures is [map_name][placeid][place2id][dist_type(euclidean,graph,geodesic)]
 
 <dl class="py function">
 <dt class="sig sig-object py" id="awpy.analytics.nav.point_distance">
-<span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">point_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'graph'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#point_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.point_distance" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">point_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'graph'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#point_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.point_distance" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the distance between two points.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -310,7 +308,6 @@ Structures is [map_name][placeid][place2id][dist_type(euclidean,graph,geodesic)]
 <li><p><strong>point_a</strong> (<em>list</em>) – Point as a list (x,y,z)</p></li>
 <li><p><strong>point_b</strong> (<em>list</em>) – Point as a list (x,y,z)</p></li>
 <li><p><strong>dist_type</strong> (<em>string</em>) – String indicating the type of distance to use. Can be graph, geodesic, euclidean, manhattan, canberra or cosine.</p></li>
-<li><p><strong>fast</strong> (<em>boolean</em>) – Boolean indicating whether the distance should be tried to be grabbed from precomputed matrices. In that case the traversed areas are not available.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -406,25 +403,6 @@ Structures is [map_name][placeid][place2id][dist_type(euclidean,graph,geodesic)]
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A float representing the distance between these two game states</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="awpy.analytics.nav.trajectory_distance">
-<span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">trajectory_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_array_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_array_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'geodesic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precomputed_areas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#trajectory_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.trajectory_distance" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates a distance distance between two trajectories</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>trajectory_array_1</strong> – Numpy array with shape (n_Time,2|1, 5, 3) with the first index indicating the team, the second the player and the third the coordinate</p></li>
-<li><p><strong>trajectory_array_2</strong> – Numpy array with shape (n_Time,2|1, 5, 3) with the first index indicating the team, the second the player and the third the coordinate</p></li>
-<li><p><strong>distance_type</strong> – String indicating how the distance between two player positions should be calculated. Options are “geodesic”, “graph”, “euclidean” and “edit_distance”</p></li>
-<li><p><strong>precomputed_areas</strong> (<em>boolean</em>) – Indicates whether the position arrays already contain the precomputed areas in the x coordinate of the position</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A float representing the distance between these two trajectories</p>
 </dd>
 </dl>
 </dd></dl>
