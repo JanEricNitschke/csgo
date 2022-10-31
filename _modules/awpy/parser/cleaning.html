@@ -82,11 +82,10 @@
 
 <span class="kn">import</span> <span class="nn">difflib</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">textdistance</span>
 
 
-<div class="viewcode-block" id="associate_entities"><a class="viewcode-back" href="../../../parser.html#awpy.parser.cleaning.associate_entities">[docs]</a><span class="k">def</span> <span class="nf">associate_entities</span><span class="p">(</span><span class="n">game_names</span><span class="o">=</span><span class="p">[],</span> <span class="n">entity_names</span><span class="o">=</span><span class="p">[],</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;lcss&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="associate_entities"><a class="viewcode-back" href="../../../parser.html#awpy.parser.cleaning.associate_entities">[docs]</a><span class="k">def</span> <span class="nf">associate_entities</span><span class="p">(</span><span class="n">game_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">entity_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;lcss&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A function to return a dict of associated entities. Accepts</span>
 
 <span class="sd">    Args:</span>
@@ -97,6 +96,10 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        A dictionary where the keys are entries in game_names, values are the matched entity names.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">game_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">game_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">entity_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">entity_names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">metric</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;lcss&quot;</span><span class="p">:</span>
         <span class="n">dist_metric</span> <span class="o">=</span> <span class="n">textdistance</span><span class="o">.</span><span class="n">lcsseq</span><span class="o">.</span><span class="n">distance</span>
     <span class="k">elif</span> <span class="n">metric</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;hamming&quot;</span><span class="p">:</span>
