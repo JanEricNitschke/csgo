@@ -87,11 +87,13 @@
 
 
 <div class="viewcode-block" id="DemoParser"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser">[docs]</a><span class="k">class</span> <span class="nc">DemoParser</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;DemoParser can parse, load and clean data from a CSGO demofile. Can be instantiated without a specified demofile.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DemoParser can parse, load and clean data from a CSGO demofile. Can be instantiated without a specified demofile.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        demofile (string): A string denoting the path to the demo file, which ends in .dem</span>
 <span class="sd">        demo_id (string): A unique demo name/game id. Default is inferred from demofile name</span>
+<span class="sd">        output_file (str): The output file name. Set to &#39;demoid&#39;+&quot;.json&quot;</span>
+<span class="sd">        outpath (str): The path where the json file will be saved to</span>
 <span class="sd">        log (boolean): A boolean indicating if the log should print to stdout.</span>
 <span class="sd">        parse_rate (int): One of 128, 64, 32, 16, 8, 4, 2, or 1. The lower the value, the more frames are collected. Indicates spacing between parsed demo frames in ticks. Default is 128.</span>
 <span class="sd">        parse_frames (bool): Flag if you want to parse frames (trajectory data) or not</span>
@@ -99,6 +101,8 @@
 <span class="sd">        trade_time (int): Length of the window for a trade (in seconds). Default is 5.</span>
 <span class="sd">        dmg_rolled (bool): Boolean if you want damages rolled up (since multiple damages for a player can happen in 1 tick from the same weapon.)</span>
 <span class="sd">        buy_style (string): Buy style string, one of &quot;hltv&quot; or &quot;csgo&quot;</span>
+<span class="sd">        json_indentation (bool): Whether the json file should be pretty printed with indentation (larger, more readable) or not (smaller, less human readable)</span>
+<span class="sd">        json (Optional[dict]): Dictionary containing the parsed json file</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: Raises a ValueError if the Golang version is lower than 1.17</span>
@@ -129,16 +133,21 @@
 
         <span class="c1"># Handle demofile and demo_id name. Finds right most &#39;/&#39; in case demofile is a specified path.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">demofile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">demofile</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Initialized awpy DemoParser with demofile </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">demofile</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">demo_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">demo_id</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">demo_id</span> <span class="o">=</span> <span class="n">demofile</span><span class="p">[</span><span class="n">demofile</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="o">-</span><span class="mi">4</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">demo_id</span> <span class="o">=</span> <span class="n">demo_id</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting demo id to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">demo_id</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">demo_id</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span>
+
         <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">outpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">outpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting demo id to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">demo_id</span><span class="p">)</span>
 
         <span class="c1"># Handle parse rate. If the parse rate is less than 64, likely to be slow</span>
         <span class="k">if</span> <span class="n">parse_rate</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parse_rate</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
@@ -164,6 +173,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting parse rate to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_rate</span><span class="p">))</span>
 
         <span class="c1"># Handle trade time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trade_time</span> <span class="o">=</span> <span class="n">trade_time</span>
         <span class="k">if</span> <span class="n">trade_time</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Trade time can&#39;t be negative, setting to default value of 5 seconds.&quot;</span>
@@ -174,8 +184,7 @@
                 <span class="s2">&quot;Trade time of </span><span class="si">%s</span><span class="s2"> is rather long. Consider a value between 4-7.&quot;</span><span class="p">,</span>
                 <span class="nb">str</span><span class="p">(</span><span class="n">trade_time</span><span class="p">),</span>
             <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">trade_time</span> <span class="o">=</span> <span class="n">trade_time</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting trade time to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trade_time</span><span class="p">))</span>
 
         <span class="c1"># Handle buy style</span>
@@ -202,8 +211,11 @@
         <span class="c1"># Set parse error to False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parse_error</span> <span class="o">=</span> <span class="kc">False</span>
 
+        <span class="c1"># Initialize json attribute as None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">json</span> <span class="o">=</span> <span class="kc">None</span>
+
 <div class="viewcode-block" id="DemoParser.parse_demo"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.parse_demo">[docs]</a>    <span class="k">def</span> <span class="nf">parse_demo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Parse a demofile using the Go script parse_demo.go -- this function needs the .demofile to be set in the class, and the file needs to exist.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse a demofile using the Go script parse_demo.go -- this function needs the .demofile to be set in the class, and the file needs to exist.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Outputs a JSON file to current working directory.</span>
@@ -263,7 +275,6 @@
             <span class="n">cwd</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">stdout</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">demo_id</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outpath</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Wrote demo parse output to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parse_error</span> <span class="o">=</span> <span class="kc">False</span>
@@ -273,7 +284,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DemoParser.read_json"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.read_json">[docs]</a>    <span class="k">def</span> <span class="nf">read_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reads the JSON file given a JSON path. Can be used to read in already processed demofiles.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads the JSON file given a JSON path. Can be used to read in already processed demofiles.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            json_path (string): Path to JSON file</span>
@@ -300,7 +311,7 @@
         <span class="k">return</span> <span class="n">demo_data</span></div>
 
 <div class="viewcode-block" id="DemoParser.parse"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">clean</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Wrapper for parse_demo() and read_json(). Use to parse a demo.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper for parse_demo() and read_json(). Use to parse a demo.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            return_type (string): Either &quot;json&quot; or &quot;df&quot;</span>
@@ -333,7 +344,7 @@
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;No JSON parsed! Error in producing JSON.&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DemoParser.parse_json_to_df"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.parse_json_to_df">[docs]</a>    <span class="k">def</span> <span class="nf">parse_json_to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns JSON into dictionary where keys correspond to data frames</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns JSON into dictionary where keys correspond to data frames</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dictionary of output</span>
@@ -413,7 +424,7 @@
             <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_parse_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns frames as a Pandas dataframe</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns frames as a Pandas dataframe</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A Pandas dataframe where each row is a frame (game state) in the demo, which is a discrete point of time.</span>
@@ -458,7 +469,7 @@
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_parse_player_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns player frames as a Pandas dataframe.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns player frames as a Pandas dataframe.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A Pandas dataframe where each row is a player&#39;s attributes at a given frame (game state).</span>
@@ -500,7 +511,7 @@
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_parse_rounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns rounds as a Pandas dataframe</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns rounds as a Pandas dataframe</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A Pandas dataframe where each row is a round</span>
@@ -552,7 +563,7 @@
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_parse_kills</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns kills as either a Pandas dataframe</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns kills as either a Pandas dataframe</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A Pandas dataframe where each row is a kill</span>
@@ -580,7 +591,7 @@
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_parse_weapon_fires</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns weapon fires as either a list or Pandas dataframe</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns weapon fires as either a list or Pandas dataframe</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A  Pandas dataframe where each row is a weapon fire event</span>
@@ -608,7 +619,7 @@
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_parse_damages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns damages as a Pandas dataframe</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns damages as a Pandas dataframe</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A Pandas dataframe where each row is a damage event.</span>
@@ -636,7 +647,7 @@
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_parse_grenades</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns grenades as a Pandas dataframe</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns grenades as a Pandas dataframe</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list or Pandas dataframe where each row is a grenade throw</span>
@@ -664,7 +675,7 @@
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_parse_bomb_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns bomb events as a Pandas dataframe</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns bomb events as a Pandas dataframe</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A Pandas dataframe where each row is a bomb event (defuse, plant, etc.)</span>
@@ -692,7 +703,7 @@
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_parse_flashes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns flashes as a Pandas dataframe</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns flashes as a Pandas dataframe</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A Pandas dataframe where each row is a flash event.</span>
@@ -732,7 +743,7 @@
         <span class="n">return_type</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span>
         <span class="n">save_to_json</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Cleans a parsed demofile JSON.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cleans a parsed demofile JSON.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            remove_no_frames (bool, optional): Remove rounds where there are no frames. Default to True.</span>
@@ -788,12 +799,12 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DemoParser.write_json"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.write_json">[docs]</a>    <span class="k">def</span> <span class="nf">write_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Rewrite the JSON file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rewrite the JSON file&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outpath</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">json</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_indentation</span> <span class="k">else</span> <span class="kc">None</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="DemoParser.renumber_rounds"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.renumber_rounds">[docs]</a>    <span class="k">def</span> <span class="nf">renumber_rounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Renumbers the rounds.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Renumbers the rounds.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            AttributeError: Raises an AttributeError if the .json attribute has a &quot;gameRounds&quot; key.</span>
@@ -810,7 +821,7 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DemoParser.rescore_rounds"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.rescore_rounds">[docs]</a>    <span class="k">def</span> <span class="nf">rescore_rounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Rescore the rounds based on round end reason.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rescore the rounds based on round end reason.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            AttributeError: Raises an AttributeError if the .json attribute has a &quot;gameRounds&quot; key.</span>
@@ -856,7 +867,7 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DemoParser.remove_bad_scoring"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.remove_bad_scoring">[docs]</a>    <span class="k">def</span> <span class="nf">remove_bad_scoring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes rounds where the scoring is bad.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes rounds where the scoring is bad.</span>
 
 <span class="sd">        We loop through the rounds:</span>
 <span class="sd">        If the round ahead has equal or less score, we do not add the current round.</span>
@@ -887,12 +898,24 @@
                     <span class="k">elif</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;endCTScore&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;endTScore&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">14</span><span class="p">):</span>
                         <span class="n">cleaned_rounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">OT_Scores</span> <span class="o">=</span> <span class="p">[</span><span class="mi">19</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">39</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">47</span><span class="p">]</span>
-                        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">OT_Scores</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;endCTScore&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;endTScore&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">s</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-                                <span class="n">cleaned_rounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-                            <span class="k">elif</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;endTScore&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;endCTScore&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">s</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-                                <span class="n">cleaned_rounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                        <span class="c1"># OT win scores are of the type:</span>
+                        <span class="c1"># 15 + (4xN) with N a natural numbers (1, 2, 3, ...)</span>
+                        <span class="c1"># So 19, 23, 27, ...</span>
+                        <span class="c1"># So if you substract 15 from an OT winning round the number is divisible by 4</span>
+                        <span class="c1"># OT_Scores = [19, 23, 27, 31, 35, 39, 43, 47]</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;endCTScore&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">15</span><span class="p">)</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span>
+                            <span class="ow">and</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;endTScore&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;endCTScore&quot;</span><span class="p">]</span>
+                        <span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+                            <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;endTScore&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">15</span><span class="p">)</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span>
+                            <span class="ow">and</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;endCTScore&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;endTScore&quot;</span><span class="p">]</span>
+                        <span class="p">):</span>
+                            <span class="n">cleaned_rounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                        <span class="c1"># for s in OT_Scores:</span>
+                        <span class="c1">#     if (r[&quot;endCTScore&quot;] == s) &amp; (r[&quot;endTScore&quot;] &lt; s - 1):</span>
+                        <span class="c1">#         cleaned_rounds.append(r)</span>
+                        <span class="c1">#     elif (r[&quot;endTScore&quot;] == s) &amp; (r[&quot;endCTScore&quot;] &lt; s - 1):</span>
+                        <span class="c1">#         cleaned_rounds.append(r)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">lookback_round</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">&quot;gameRounds&quot;</span><span class="p">][</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
                     <span class="n">lookback_round_total</span> <span class="o">=</span> <span class="p">(</span>
@@ -913,7 +936,7 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DemoParser.remove_rounds_with_no_frames"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.remove_rounds_with_no_frames">[docs]</a>    <span class="k">def</span> <span class="nf">remove_rounds_with_no_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes rounds with no frames</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes rounds with no frames</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            AttributeError: Raises an AttributeError if the .json attribute is None</span>
@@ -938,7 +961,7 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DemoParser.remove_excess_players"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.remove_excess_players">[docs]</a>    <span class="k">def</span> <span class="nf">remove_excess_players</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes rounds where there are more than 5 players on a side.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes rounds where there are more than 5 players on a side.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            AttributeError: Raises an AttributeError if the .json attribute is None</span>
@@ -974,7 +997,7 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DemoParser.remove_warmups"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.remove_warmups">[docs]</a>    <span class="k">def</span> <span class="nf">remove_warmups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes warmup rounds.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes warmup rounds.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            AttributeError: Raises an AttributeError if the .json attribute is None</span>
@@ -1006,7 +1029,7 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DemoParser.remove_end_round"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.remove_end_round">[docs]</a>    <span class="k">def</span> <span class="nf">remove_end_round</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bad_endings</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes rounds with bad end reason.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes rounds with bad end reason.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            bad_endings (list, optional): List of bad round end reasons. Defaults to [&quot;Draw&quot;, &quot;Unknown&quot;, &quot;&quot;].</span>
@@ -1031,7 +1054,7 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DemoParser.remove_knife_rounds"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.remove_knife_rounds">[docs]</a>    <span class="k">def</span> <span class="nf">remove_knife_rounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes knife rounds.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes knife rounds.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            AttributeError: Raises an AttributeError if the .json attribute is None</span>
@@ -1058,7 +1081,7 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DemoParser.remove_excess_kill_rounds"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.remove_excess_kill_rounds">[docs]</a>    <span class="k">def</span> <span class="nf">remove_excess_kill_rounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes rounds with more than 10 kills.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes rounds with more than 10 kills.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            AttributeError: Raises an AttributeError if the .json attribute is None</span>
@@ -1079,7 +1102,7 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="DemoParser.remove_time_rounds"><a class="viewcode-back" href="../../../parser.html#awpy.parser.demoparser.DemoParser.remove_time_rounds">[docs]</a>    <span class="k">def</span> <span class="nf">remove_time_rounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove rounds with odd round timings.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove rounds with odd round timings.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            AttributeError: Raises an AttributeError if the .json attribute is None</span>

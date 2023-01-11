@@ -61,6 +61,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser"><code class="docutils literal notranslate"><span class="pre">DemoParser</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.demofile"><code class="docutils literal notranslate"><span class="pre">DemoParser.demofile</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.demo_id"><code class="docutils literal notranslate"><span class="pre">DemoParser.demo_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.output_file"><code class="docutils literal notranslate"><span class="pre">DemoParser.output_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.outpath"><code class="docutils literal notranslate"><span class="pre">DemoParser.outpath</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.log"><code class="docutils literal notranslate"><span class="pre">DemoParser.log</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.parse_rate"><code class="docutils literal notranslate"><span class="pre">DemoParser.parse_rate</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.parse_frames"><code class="docutils literal notranslate"><span class="pre">DemoParser.parse_frames</span></code></a></li>
@@ -68,6 +70,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.trade_time"><code class="docutils literal notranslate"><span class="pre">DemoParser.trade_time</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.dmg_rolled"><code class="docutils literal notranslate"><span class="pre">DemoParser.dmg_rolled</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.buy_style"><code class="docutils literal notranslate"><span class="pre">DemoParser.buy_style</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.json_indentation"><code class="docutils literal notranslate"><span class="pre">DemoParser.json_indentation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.json"><code class="docutils literal notranslate"><span class="pre">DemoParser.json</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.clean_rounds"><code class="docutils literal notranslate"><span class="pre">DemoParser.clean_rounds()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.parse"><code class="docutils literal notranslate"><span class="pre">DemoParser.parse()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#awpy.parser.demoparser.DemoParser.parse_demo"><code class="docutils literal notranslate"><span class="pre">DemoParser.parse_demo()</span></code></a></li>
@@ -190,6 +194,28 @@
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.output_file">
+<span class="sig-name descname"><span class="pre">output_file</span></span><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.output_file" title="Permalink to this definition"></a></dt>
+<dd><p>The output file name. Set to ‘demoid’+”.json”</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.outpath">
+<span class="sig-name descname"><span class="pre">outpath</span></span><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.outpath" title="Permalink to this definition"></a></dt>
+<dd><p>The path where the json file will be saved to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.log">
 <span class="sig-name descname"><span class="pre">log</span></span><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.log" title="Permalink to this definition"></a></dt>
 <dd><p>A boolean indicating if the log should print to stdout.</p>
@@ -262,6 +288,28 @@
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.json_indentation">
+<span class="sig-name descname"><span class="pre">json_indentation</span></span><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.json_indentation" title="Permalink to this definition"></a></dt>
+<dd><p>Whether the json file should be pretty printed with indentation (larger, more readable) or not (smaller, less human readable)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="awpy.parser.demoparser.DemoParser.json">
+<span class="sig-name descname"><span class="pre">json</span></span><a class="headerlink" href="#awpy.parser.demoparser.DemoParser.json" title="Permalink to this definition"></a></dt>
+<dd><p>Dictionary containing the parsed json file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[dict]</p>
 </dd>
 </dl>
 </dd></dl>

@@ -144,7 +144,7 @@ ax.add_patch(rect)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="awpy.analytics.nav.area_distance">
 <span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">area_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'graph'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/nav.html#area_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.area_distance" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the distance between two areas. Dist type can be graph or geodesic.</p>
+<dd><p>Returns the distance between two areas. Dist type can be graph, geodesic or euclidean.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -245,6 +245,9 @@ Structures is [map_name][area1id][area2id][dist_type(euclidean,graph,geodesic)]<
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Tree structure containing distances for all area pairs on all maps</p>
 </dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – Raises a ValueError if map_name is not in awpy.data.NAV</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -276,6 +279,9 @@ Structures is [map_name][placeid][place2id][dist_type(euclidean,graph,geodesic)]
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Tree structure containing distances for all place pairs on all maps</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – Raises a ValueError if map_name is not in awpy.data.NAV</p>
 </dd>
 </dl>
 </dd></dl>
@@ -342,8 +348,10 @@ Structures is [map_name][placeid][place2id][dist_type(euclidean,graph,geodesic)]
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>map_name</strong> (<em>string</em>) – Map to search</p></li>
-<li><p><strong>position_array_1</strong> (<em>numpy array</em>) – Numpy array with shape (2|1, 5, 3) with the first index indicating the team, the second the player and the third the coordinate</p></li>
-<li><p><strong>position_array_2</strong> (<em>numpy array</em>) – Numpy array with shape (2|1, 5, 3) with the first index indicating the team, the second the player and the third the coordinate</p></li>
+<li><p><strong>position_array_1</strong> (<em>numpy array</em>) – Numpy array with shape (2|1, 5, 3) with the first index indicating the team, the second the player and the third the coordinate
+Alternatively the array can have shape (2|1, 5, 1) where the last value gives the area_id. Used only with geodesic and graph distance</p></li>
+<li><p><strong>position_array_2</strong> (<em>numpy array</em>) – Numpy array with shape (2|1, 5, 3) with the first index indicating the team, the second the player and the third the coordinate
+Alternatively the array can have shape (2|1, 5, 1) where the last value gives the area_id. Used only with geodesic and graph distance</p></li>
 <li><p><strong>distance_type</strong> (<em>string</em>) – String indicating how the distance between two player positions should be calculated. Options are “geodesic”, “graph” and “euclidean”</p></li>
 </ul>
 </dd>
@@ -424,6 +432,7 @@ Structures is [map_name][placeid][place2id][dist_type(euclidean,graph,geodesic)]
 </section>
 <section id="module-awpy.analytics.states">
 <span id="awpy-analytics-states"></span><h2>awpy.analytics.states<a class="headerlink" href="#module-awpy.analytics.states" title="Permalink to this heading"></a></h2>
+<p>Functions to to generate game stats based on snapshots from a demofile.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="awpy.analytics.states.generate_graph_state">
 <span class="sig-prename descclassname"><span class="pre">awpy.analytics.states.</span></span><span class="sig-name descname"><span class="pre">generate_graph_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/awpy/analytics/states.html#generate_graph_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.states.generate_graph_state" title="Permalink to this definition"></a></dt>
