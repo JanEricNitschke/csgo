@@ -135,25 +135,25 @@
 <section id="module-awpy.analytics.nav">
 <span id="awpy-analytics-nav"></span><h2>awpy.analytics.nav<a class="headerlink" href="#module-awpy.analytics.nav" title="Permalink to this heading"></a></h2>
 <p>Functions for finding distances between points, areas or states.</p>
-<p>Typical usage example:</p>
-<p>from awpy.analytics.nav import area_distance</p>
-<p>geodesic_dist = area_distance(map_name=”de_dust2”, area_a=152, area_b=8970, dist_type=”geodesic”)
-f, ax = plot_map(map_name = “de_dust2”, map_type = ‘simpleradar’, dark = True)</p>
-<dl>
-<dt>for a in NAV[“de_dust2”]:</dt><dd><p>area = NAV[“de_dust2”][a]
-color = “None”
-if a in geodesic_dist[“areas”]:</p>
-<blockquote>
-<div><p>color = “red”</p>
-</div></blockquote>
-<p>width = (area[“southEastX”] - area[“northWestX”])
-height = (area[“northWestY”] - area[“southEastY”])
-southwest_x = area[“northWestX”]
-southwest_y = area[“southEastY”]
-rect = patches.Rectangle((southwest_x,southwest_y), width, height, linewidth=1, edgecolor=”yellow”, facecolor=color)
-ax.add_patch(rect)</p>
-</dd>
-</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">awpy.analytics.nav</span> <span class="kn">import</span> <span class="n">area_distance</span>
+
+<span class="n">geodesic_dist</span> <span class="o">=</span> <span class="n">area_distance</span><span class="p">(</span><span class="n">map_name</span><span class="o">=</span><span class="s2">&quot;de_dust2&quot;</span><span class="p">,</span> <span class="n">area_a</span><span class="o">=</span><span class="mi">152</span><span class="p">,</span> <span class="n">area_b</span><span class="o">=</span><span class="mi">8970</span><span class="p">,</span> <span class="n">dist_type</span><span class="o">=</span><span class="s2">&quot;geodesic&quot;</span><span class="p">)</span>
+<span class="n">f</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_map</span><span class="p">(</span><span class="n">map_name</span> <span class="o">=</span> <span class="s2">&quot;de_dust2&quot;</span><span class="p">,</span> <span class="n">map_type</span> <span class="o">=</span> <span class="s1">&#39;simpleradar&#39;</span><span class="p">,</span> <span class="n">dark</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">NAV</span><span class="p">[</span><span class="s2">&quot;de_dust2&quot;</span><span class="p">]:</span>
+    <span class="n">area</span> <span class="o">=</span> <span class="n">NAV</span><span class="p">[</span><span class="s2">&quot;de_dust2&quot;</span><span class="p">][</span><span class="n">a</span><span class="p">]</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">geodesic_dist</span><span class="p">[</span><span class="s2">&quot;areas&quot;</span><span class="p">]:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="p">(</span><span class="n">area</span><span class="p">[</span><span class="s2">&quot;southEastX&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">area</span><span class="p">[</span><span class="s2">&quot;northWestX&quot;</span><span class="p">])</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="p">(</span><span class="n">area</span><span class="p">[</span><span class="s2">&quot;northWestY&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">area</span><span class="p">[</span><span class="s2">&quot;southEastY&quot;</span><span class="p">])</span>
+    <span class="n">southwest_x</span> <span class="o">=</span> <span class="n">area</span><span class="p">[</span><span class="s2">&quot;northWestX&quot;</span><span class="p">]</span>
+    <span class="n">southwest_y</span> <span class="o">=</span> <span class="n">area</span><span class="p">[</span><span class="s2">&quot;southEastY&quot;</span><span class="p">]</span>
+    <span class="n">rect</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">southwest_x</span><span class="p">,</span><span class="n">southwest_y</span><span class="p">),</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+</pre></div>
+</div>
 <p><a class="reference external" href="https://github.com/pnxenopoulos/awpy/blob/main/examples/03_Working_with_Navigation_Meshes.ipynb">https://github.com/pnxenopoulos/awpy/blob/main/examples/03_Working_with_Navigation_Meshes.ipynb</a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="awpy.analytics.nav.ClosestArea">
@@ -312,8 +312,8 @@ Defaults to ‘geodesic’</p></li>
 <span class="sig-prename descclassname"><span class="pre">awpy.analytics.nav.</span></span><span class="sig-name descname"><span class="pre">generate_area_distance_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">map_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'graph'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'geodesic'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'euclidean'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/awpy/analytics/nav.html#generate_area_distance_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#awpy.analytics.nav.generate_area_distance_matrix" title="Permalink to this definition"></a></dt>
 <dd><p>Generates or grabs a tree like nested dictionary containing distance matrices (as dicts) for each map for all area
 Structures is [map_name][area1id][area2id][dist_type(euclidean,graph,geodesic)]</p>
-<p>Note that this can take 20min to 5h to run depending on the map and produces
-an output file of 50-300mb. If you run this offline and want to store the result for
+<p>Note that this can take 20min to 13h to run depending on the map and produces
+an output file of 50-600mb. If you run this offline and want to store the result for
 later reuse make sure to set ‘save=True’!</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -617,21 +617,23 @@ Defaults to ‘centroid’</p></li>
 <section id="module-awpy.analytics.stats">
 <span id="awpy-analytics-stats"></span><h2>awpy.analytics.stats<a class="headerlink" href="#module-awpy.analytics.stats" title="Permalink to this heading"></a></h2>
 <p>Functions to calculate statistics for a player or team from a demofile.</p>
-<p>Typical usage example:</p>
-<p>from awpy.parser import DemoParser
-from awpy.analytics.stats import player_stats</p>
-<p># Create the parser object.
-parser = DemoParser(</p>
-<blockquote>
-<div><p>demofile = “astralis-vs-liquid-m2-nuke.dem”,
-demo_id = “AST-TL-BLAST2019-nuke”,
-parse_frames=False,</p>
-</div></blockquote>
-<p>)</p>
-<p># Parse the demofile, output results to a dictionary of dataframes.
-data = parser.parse()
-player_stats_json = player_stats(data[“gameRounds”])
-player_stats_json[76561197999004010]</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">awpy.parser</span> <span class="kn">import</span> <span class="n">DemoParser</span>
+<span class="kn">from</span> <span class="nn">awpy.analytics.stats</span> <span class="kn">import</span> <span class="n">player_stats</span>
+
+<span class="c1"># Create the parser object.</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">DemoParser</span><span class="p">(</span>
+    <span class="n">demofile</span> <span class="o">=</span> <span class="s2">&quot;astralis-vs-liquid-m2-nuke.dem&quot;</span><span class="p">,</span>
+    <span class="n">demo_id</span> <span class="o">=</span> <span class="s2">&quot;AST-TL-BLAST2019-nuke&quot;</span><span class="p">,</span>
+    <span class="n">parse_frames</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Parse the demofile, output results to a dictionary of dataframes.</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+<span class="n">player_stats_json</span> <span class="o">=</span> <span class="n">player_stats</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;gameRounds&quot;</span><span class="p">])</span>
+<span class="n">player_stats_json</span><span class="p">[</span><span class="mi">76561197999004010</span><span class="p">]</span>
+</pre></div>
+</div>
 <p><a class="reference external" href="https://github.com/pnxenopoulos/awpy/blob/main/examples/01_Basic_CSGO_Analysis.ipynb">https://github.com/pnxenopoulos/awpy/blob/main/examples/01_Basic_CSGO_Analysis.ipynb</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="awpy.analytics.stats.other_side">

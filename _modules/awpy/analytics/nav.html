@@ -79,7 +79,7 @@
   <h1>Source code for awpy.analytics.nav</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Functions for finding distances between points, areas or states.</span>
 
-<span class="sd">    Typical usage example:</span>
+<span class="sd">Example::</span>
 
 <span class="sd">    from awpy.analytics.nav import area_distance</span>
 
@@ -98,7 +98,7 @@
 <span class="sd">        rect = patches.Rectangle((southwest_x,southwest_y), width, height, linewidth=1, edgecolor=&quot;yellow&quot;, facecolor=color)</span>
 <span class="sd">        ax.add_patch(rect)</span>
 
-<span class="sd">    https://github.com/pnxenopoulos/awpy/blob/main/examples/03_Working_with_Navigation_Meshes.ipynb</span>
+<span class="sd">https://github.com/pnxenopoulos/awpy/blob/main/examples/03_Working_with_Navigation_Meshes.ipynb</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -465,8 +465,8 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates or grabs a tree like nested dictionary containing distance matrices (as dicts) for each map for all area</span>
 <span class="sd">    Structures is [map_name][area1id][area2id][dist_type(euclidean,graph,geodesic)]</span>
 
-<span class="sd">    Note that this can take 20min to 5h to run depending on the map and produces</span>
-<span class="sd">    an output file of 50-300mb. If you run this offline and want to store the result for</span>
+<span class="sd">    Note that this can take 20min to 13h to run depending on the map and produces</span>
+<span class="sd">    an output file of 50-600mb. If you run this offline and want to store the result for</span>
 <span class="sd">    later reuse make sure to set &#39;save=True&#39;!</span>
 
 <span class="sd">    Args:</span>
@@ -480,8 +480,8 @@
 <span class="sd">        ValueError: Raises a ValueError if map_name is not in awpy.data.NAV</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Note that this can take 20min to 5h to run depending on the map and produces an output file of 50-300mb.</span>
-<span class="sd">    If you run this offline and want to store the result for later reuse make sure to set &#39;save=True&#39;!&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Note that this can take 20min to 13h to run depending on the map and produces an output file of 50-600mb.</span>
+<span class="sd">If you run this offline and want to store the result for later reuse make sure to set &#39;save=True&#39;!&quot;&quot;&quot;</span>
     <span class="p">)</span>
     <span class="c1"># Initialize the dict structure</span>
     <span class="n">area_distance_matrix</span><span class="p">:</span> <span class="n">AreaMatrix</span> <span class="o">=</span> <span class="n">tree</span><span class="p">()</span>
@@ -490,6 +490,7 @@
     <span class="n">areas</span> <span class="o">=</span> <span class="n">NAV</span><span class="p">[</span><span class="n">map_name</span><span class="p">]</span>
     <span class="c1"># And there over each area</span>
     <span class="k">for</span> <span class="n">area1</span> <span class="ow">in</span> <span class="n">areas</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating distances from area </span><span class="si">{</span><span class="n">area1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="c1"># Precompute the tile center</span>
         <span class="n">area1_x</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">NAV</span><span class="p">[</span><span class="n">map_name</span><span class="p">][</span><span class="n">area1</span><span class="p">][</span><span class="s2">&quot;southEastX&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">NAV</span><span class="p">[</span><span class="n">map_name</span><span class="p">][</span><span class="n">area1</span><span class="p">][</span><span class="s2">&quot;northWestX&quot;</span><span class="p">]</span>
@@ -550,6 +551,11 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: Raises a ValueError if map_name is not in awpy.data.NAV</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">map_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AREA_DIST_MATRIX</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Skipping calculation of median distances between places.</span>
+<span class="sd">If you want to have those included run `generate_area_distance_matrix` first!&quot;&quot;&quot;</span>
+        <span class="p">)</span>
     <span class="k">if</span> <span class="n">map_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">NAV</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Map not found.&quot;</span><span class="p">)</span>
     <span class="n">areas</span> <span class="o">=</span> <span class="n">NAV</span><span class="p">[</span><span class="n">map_name</span><span class="p">]</span>
@@ -565,6 +571,7 @@
         <span class="n">centroids</span><span class="p">,</span> <span class="n">reps</span> <span class="o">=</span> <span class="n">generate_centroids</span><span class="p">(</span><span class="n">map_name</span><span class="p">)</span>
         <span class="c1"># Loop over all pairs of named places</span>
         <span class="k">for</span> <span class="n">place1</span><span class="p">,</span> <span class="n">centroid1</span> <span class="ow">in</span> <span class="n">centroids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating distances from place </span><span class="si">{</span><span class="n">place1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">place2</span><span class="p">,</span> <span class="n">centroid2</span> <span class="ow">in</span> <span class="n">centroids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="c1"># If precomputed values do not exist calculate them</span>
                 <span class="k">if</span> <span class="n">map_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AREA_DIST_MATRIX</span><span class="p">:</span>
@@ -585,20 +592,25 @@
                         <span class="s2">&quot;distance&quot;</span>
                     <span class="p">]</span>
                     <span class="c1"># Median of all the distance pairs for areaA in place1 to areaB in place2</span>
-                    <span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>
-                    <span class="k">for</span> <span class="n">sub_area1</span> <span class="ow">in</span> <span class="n">area_mapping</span><span class="p">[</span><span class="n">place1</span><span class="p">]:</span>
-                        <span class="k">for</span> <span class="n">sub_area2</span> <span class="ow">in</span> <span class="n">area_mapping</span><span class="p">[</span><span class="n">place2</span><span class="p">]:</span>
-                            <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                                <span class="n">area_distance</span><span class="p">(</span>
-                                    <span class="n">map_name</span><span class="p">,</span>
-                                    <span class="n">sub_area1</span><span class="p">,</span>
-                                    <span class="n">sub_area2</span><span class="p">,</span>
-                                    <span class="n">dist_type</span><span class="o">=</span><span class="n">dist_type</span><span class="p">,</span>
-                                <span class="p">)[</span><span class="s2">&quot;distance&quot;</span><span class="p">]</span>
-                            <span class="p">)</span>
                     <span class="n">place_distance_matrix</span><span class="p">[</span><span class="n">place1</span><span class="p">][</span><span class="n">place2</span><span class="p">][</span><span class="n">dist_type</span><span class="p">][</span>
                         <span class="s2">&quot;median_dist&quot;</span>
-                    <span class="p">]</span> <span class="o">=</span> <span class="n">median</span><span class="p">(</span><span class="n">connections</span><span class="p">)</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="c1"># Without having the AREA_DISTANCE_MATRIX precalculated</span>
+                    <span class="c1"># this step could take up to 13 hours</span>
+                    <span class="c1"># connections = []</span>
+                    <span class="c1"># for sub_area1 in area_mapping[place1]:</span>
+                    <span class="c1">#     for sub_area2 in area_mapping[place2]:</span>
+                    <span class="c1">#         connections.append(</span>
+                    <span class="c1">#             area_distance(</span>
+                    <span class="c1">#                 map_name,</span>
+                    <span class="c1">#                 sub_area1,</span>
+                    <span class="c1">#                 sub_area2,</span>
+                    <span class="c1">#                 dist_type=dist_type,</span>
+                    <span class="c1">#             )[&quot;distance&quot;]</span>
+                    <span class="c1">#         )</span>
+                    <span class="c1"># place_distance_matrix[place1][place2][dist_type][</span>
+                    <span class="c1">#     &quot;median_dist&quot;</span>
+                    <span class="c1"># ] = median(connections)</span>
                 <span class="c1"># If precomputed values exist just grab those</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">place_distance_matrix</span><span class="p">[</span><span class="n">place1</span><span class="p">][</span><span class="n">place2</span><span class="p">][</span><span class="n">dist_type</span><span class="p">][</span>
