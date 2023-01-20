@@ -551,28 +551,28 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: Raises a ValueError if map_name is not in awpy.data.NAV</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">map_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">NAV</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Map not found.&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">map_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AREA_DIST_MATRIX</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Skipping calculation of median distances between places.</span>
 <span class="sd">If you want to have those included run `generate_area_distance_matrix` first!&quot;&quot;&quot;</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="n">map_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">NAV</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Map not found.&quot;</span><span class="p">)</span>
     <span class="n">areas</span> <span class="o">=</span> <span class="n">NAV</span><span class="p">[</span><span class="n">map_name</span><span class="p">]</span>
     <span class="n">place_distance_matrix</span><span class="p">:</span> <span class="n">PlaceMatrix</span> <span class="o">=</span> <span class="n">tree</span><span class="p">()</span>
-    <span class="c1"># Loop over all three considered distance types</span>
-    <span class="k">for</span> <span class="n">dist_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span> <span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;euclidean&quot;</span><span class="p">]:</span>
-        <span class="n">dist_type</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">DistanceType</span><span class="p">,</span> <span class="n">dist_type</span><span class="p">)</span>
-        <span class="c1"># Get the mapping &quot;areaName&quot;: [areas that have this area name]</span>
-        <span class="n">area_mapping</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">area</span> <span class="ow">in</span> <span class="n">areas</span><span class="p">:</span>
-            <span class="n">area_mapping</span><span class="p">[</span><span class="n">areas</span><span class="p">[</span><span class="n">area</span><span class="p">][</span><span class="s2">&quot;areaName&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">area</span><span class="p">)</span>
-        <span class="c1"># Get the centroids and representative points for each named place on the map</span>
-        <span class="n">centroids</span><span class="p">,</span> <span class="n">reps</span> <span class="o">=</span> <span class="n">generate_centroids</span><span class="p">(</span><span class="n">map_name</span><span class="p">)</span>
-        <span class="c1"># Loop over all pairs of named places</span>
-        <span class="k">for</span> <span class="n">place1</span><span class="p">,</span> <span class="n">centroid1</span> <span class="ow">in</span> <span class="n">centroids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating distances from place </span><span class="si">{</span><span class="n">place1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">place2</span><span class="p">,</span> <span class="n">centroid2</span> <span class="ow">in</span> <span class="n">centroids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">area_mapping</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="c1"># Get the mapping &quot;areaName&quot;: [areas that have this area name]</span>
+    <span class="k">for</span> <span class="n">area</span> <span class="ow">in</span> <span class="n">areas</span><span class="p">:</span>
+        <span class="n">area_mapping</span><span class="p">[</span><span class="n">areas</span><span class="p">[</span><span class="n">area</span><span class="p">][</span><span class="s2">&quot;areaName&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">area</span><span class="p">)</span>
+    <span class="c1"># Get the centroids and representative points for each named place on the map</span>
+    <span class="n">centroids</span><span class="p">,</span> <span class="n">reps</span> <span class="o">=</span> <span class="n">generate_centroids</span><span class="p">(</span><span class="n">map_name</span><span class="p">)</span>
+    <span class="c1"># Loop over all pairs of named places</span>
+    <span class="k">for</span> <span class="n">place1</span><span class="p">,</span> <span class="n">centroid1</span> <span class="ow">in</span> <span class="n">centroids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating distances from place </span><span class="si">{</span><span class="n">place1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">place2</span><span class="p">,</span> <span class="n">centroid2</span> <span class="ow">in</span> <span class="n">centroids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Loop over all three considered distance types</span>
+            <span class="k">for</span> <span class="n">dist_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;geodesic&quot;</span><span class="p">,</span> <span class="s2">&quot;graph&quot;</span><span class="p">,</span> <span class="s2">&quot;euclidean&quot;</span><span class="p">]:</span>
+                <span class="n">dist_type</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">DistanceType</span><span class="p">,</span> <span class="n">dist_type</span><span class="p">)</span>
                 <span class="c1"># If precomputed values do not exist calculate them</span>
                 <span class="k">if</span> <span class="n">map_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AREA_DIST_MATRIX</span><span class="p">:</span>
                     <span class="c1"># Distances between the centroids for each named place</span>
