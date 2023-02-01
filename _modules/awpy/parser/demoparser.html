@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>awpy.parser.demoparser &mdash; awpy 1.2.1 documentation</title>
+  <title>awpy.parser.demoparser &mdash; awpy 1.2.2 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -128,6 +128,7 @@
 <span class="sd">        dmg_rolled (bool): Boolean if you want damages rolled up</span>
 <span class="sd">            (since multiple damages for a player can happen in 1 tick from the same weapon.)</span>
 <span class="sd">            Default is False</span>
+<span class="sd">        parse_chat (bool): Flag if you want to parse chat messages. Default is False</span>
 <span class="sd">        buy_style (string): Buy style string, one of &quot;hltv&quot; or &quot;csgo&quot;</span>
 <span class="sd">            Default is &quot;hltv&quot;</span>
 <span class="sd">        json_indentation (bool): Whether the json file should be pretty printed</span>
@@ -150,6 +151,7 @@
         <span class="n">parse_kill_frames</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">trade_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">dmg_rolled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">parse_chat</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">buy_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hltv&quot;</span><span class="p">,</span>
         <span class="n">json_indentation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
@@ -231,10 +233,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting buy style to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buy_style</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">dmg_rolled</span> <span class="o">=</span> <span class="n">dmg_rolled</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_chat</span> <span class="o">=</span> <span class="n">parse_chat</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parse_frames</span> <span class="o">=</span> <span class="n">parse_frames</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parse_kill_frames</span> <span class="o">=</span> <span class="n">parse_kill_frames</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">json_indentation</span> <span class="o">=</span> <span class="n">json_indentation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Rollup damages set to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dmg_rolled</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parse chat set to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_chat</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parse frames set to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_frames</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parse kill frames set to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_kill_frames</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -260,11 +264,12 @@
         <span class="c1"># Check if Golang version is compatible</span>
         <span class="n">acceptable_go</span> <span class="o">=</span> <span class="n">check_go_version</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">acceptable_go</span><span class="p">:</span>
+            <span class="n">error_message</span> <span class="o">=</span> <span class="s2">&quot;Error calling Go. Check if Go is installed using &#39;go version&#39;. Need at least v1.17.0.&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;Error calling Go. Check if Go is installed using &#39;go version&#39;. Need at least v1.17.0.&quot;</span>
+                <span class="n">error_message</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Error calling Go. Check if Go is installed using &#39;go version&#39;. Need at least v1.17.0.&quot;</span>
+               <span class="n">error_message</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Go version&gt;=1.17.0&quot;</span><span class="p">)</span>
@@ -302,6 +307,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">parser_cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--parsekillframes&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_indentation</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parser_cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--jsonindentation&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_chat</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parser_cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--parsechat&quot;</span><span class="p">)</span>
         <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parser_cmd</span><span class="p">,</span>
             <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
