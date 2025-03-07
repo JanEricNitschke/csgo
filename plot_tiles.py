@@ -42,7 +42,7 @@ from awpy.visibility import BVHNode, VisibilityChecker, load_vis_checker
 print("Finished imports, starting script", flush=True)
 
 print(NAV_DATA.keys())
-SUPPORTED_MAPS = {
+SUPPORTED_MAPS = (
     "de_ancient",
     "de_anubis",
     "de_dust2",
@@ -51,12 +51,21 @@ SUPPORTED_MAPS = {
     "de_nuke",
     "de_overpass",
     "de_train",
-    # "de_vertigo",
-}
+    "de_vertigo",
+    "ar_baggage",
+    "ar_pool_day",
+    "ar_shoots",
+    "cs_italy",
+    "cs_office",
+    "de_basalt",
+    "de_edin",
+    "de_palais",
+    "de_whistle"
+)
 GRANULARITIES = (
     "nom",
-    "100",
-    "200",
+    # "100",
+    # "200",
 )
 
 MeetingStyle = Literal["fine", "rough"]
@@ -1401,7 +1410,7 @@ def plot_map_reachability_examples() -> None:
 
 
 # plot_triangles(with_clipping=True)
-# generate_grids()
+generate_grids()
 # plot_paths()
 # plot_map_reachability_examples()
 # for map_name in SUPPORTED_MAPS:
@@ -1410,5 +1419,5 @@ def plot_map_reachability_examples() -> None:
 #             plot_spread(map_name, granularity, style)
 #               generate_spread_gif(map_name, granularity, style)
 
-plot_spread_from_input("de_ancient", "200", "fine", Nav.from_json("awpy/data/nav_200/de_ancient.json"))
-plot_spread_from_input("de_ancient", "200", "rough", Nav.from_json("awpy/data/nav_200/de_ancient.json"))
+# plot_spread_from_input("de_ancient", "200", "fine", Nav.from_json("awpy/data/nav_200/de_ancient.json"))
+# plot_spread_from_input("de_ancient", "200", "rough", Nav.from_json("awpy/data/nav_200/de_ancient.json"))
