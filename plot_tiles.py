@@ -976,6 +976,7 @@ def plot_callouts(map_name: str) -> None:
             ],
         )
         _plot_points(points=[Vector3.from_dict(callout["origin"])], map_name=map_name, axis=axis)
+        _plot_points(points=[Vector3.from_dict(callout["inside_point"])], map_name=map_name, axis=axis, color="red")
         plt.savefig(
             output_dir / f"callouts_{map_name}_{callout['callout']}_{idx}.png",
             bbox_inches="tight",
