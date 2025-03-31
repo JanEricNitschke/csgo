@@ -37,7 +37,7 @@ from awpy.nav import NAV_DATA, DynamicAttributeFlags, Nav, NavArea, PathResult
 from awpy.plot.utils import game_to_pixel
 from awpy.spawn import SPAWNS_DATA, Spawns
 from awpy.vector import Vector3
-from awpy.visibility import BVHNode, VisibilityChecker, load_vis_checker
+from awpy.visibility import BVHNode, Triangle, VisibilityChecker, load_vis_checker
 
 print("Finished imports, starting script", flush=True)
 
@@ -60,7 +60,7 @@ SUPPORTED_MAPS = (
     "de_basalt",
     "de_edin",
     "de_palais",
-    "de_whistle"
+    "de_whistle",
 )
 GRANULARITIES = (
     "nom",
@@ -941,6 +941,49 @@ def _plot_node(node: BVHNode, axis: Axes, map_name: str) -> None:
     )
 
 
+def plot_triangles_raw(map_name: str, axis: Axes, triangles: list[Triangle]) -> None:
+    triangle_areas = [NavArea(corners=[triangle.p1, triangle.p2, triangle.p3]) for triangle in triangles]
+    _plot_tiles(
+        dict(enumerate(triangle_areas)),
+        map_name=map_name,
+        axis=axis,
+        color="blue",
+        zorder=4,
+    )
+
+
+def plot_callouts(map_name: str) -> None:
+    callouts = json.loads(Path(f"callouts/{map_name}.json").read_text())
+    for idx, callout in enumerate(callouts):
+        output_dir = Path("callouts")
+        output_dir.mkdir(exist_ok=True, parents=True)
+
+        try:
+            fig, axis = plot_map(map_name)
+        except FileNotFoundError:
+            continue
+        fig.set_size_inches(19.2, 21.6)
+        plot_triangles_raw(
+            map_name,
+            axis,
+            [
+                Triangle(
+                    p1=Vector3.from_dict(triangle["p1"]),
+                    p2=Vector3.from_dict(triangle["p2"]),
+                    p3=Vector3.from_dict(triangle["p3"]),
+                )
+                for triangle in callout["triangles"]
+            ],
+        )
+        _plot_points(points=[Vector3.from_dict(callout["origin"])], map_name=map_name, axis=axis)
+        plt.savefig(
+            output_dir / f"callouts_{map_name}_{callout['callout']}_{idx}.png",
+            bbox_inches="tight",
+            dpi=300,
+        )
+        fig.clear()
+        plt.close(fig)
+
 def _plot_collision_triangles(map_name: str, axis: Axes, vis_checker: VisibilityChecker) -> None:
     _plot_node(vis_checker.root, axis, map_name)
 
@@ -1408,9 +1451,9 @@ def plot_map_reachability_examples() -> None:
                 granularity=granularity,
             )
 
-
+plot_callouts("de_anubis")
 # plot_triangles(with_clipping=True)
-generate_grids()
+# generate_grids()
 # plot_paths()
 # plot_map_reachability_examples()
 # for map_name in SUPPORTED_MAPS:
