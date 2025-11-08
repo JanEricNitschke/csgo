@@ -61,6 +61,7 @@ SUPPORTED_MAPS = (
     "de_edin",
     "de_palais",
     "de_whistle",
+    # "test_good",
 )
 GRANULARITIES = (
     "nom",
@@ -985,6 +986,7 @@ def plot_callouts(map_name: str) -> None:
         fig.clear()
         plt.close(fig)
 
+
 def _plot_collision_triangles(map_name: str, axis: Axes, vis_checker: VisibilityChecker) -> None:
     _plot_node(vis_checker.root, axis, map_name)
 
@@ -1006,15 +1008,29 @@ def plot_triangles(*, with_clipping: bool = False) -> None:
         fig.set_size_inches(19.2, 21.6)
 
         if map_name == "de_dust2":
-            x1, y1, _ = game_to_pixel(map_name, Vector3(x=195.87492752075195, y=2467.874755859375, z=-52.5000057220459))
+            # x1, y1, _ = game_to_pixel(map_name, Vector3(x=195.87492752075195, y=2467.874755859375, z=-52.5000057220459))
+            # x2, y2, _ = game_to_pixel(
+            #     map_name, Vector3(x=-659.0001831054688, y=-766.5000813802084, z=188.00001525878906)
+            # )
+            # axis.plot([x1, x2], [y1, y2], color="red", lw=1.0)
+
+            # x1, y1, _ = game_to_pixel(map_name, Vector3(x=195.87492752075195, y=2467.874755859375, z=-52.5000057220459))
+            # x2, y2, _ = game_to_pixel(
+            #     map_name, Vector3(x=-750.2501831054688, y=-790.8750915527344, z=187.00001525878906)
+            # )
+            # axis.plot([x1, x2], [y1, y2], color="red", lw=1.0)
+
+
+
+            x1, y1, _ = game_to_pixel(map_name, Vector3(x=-680, y=834, z=180))
             x2, y2, _ = game_to_pixel(
-                map_name, Vector3(x=-659.0001831054688, y=-766.5000813802084, z=188.00001525878906)
+                map_name, Vector3(x=-1349, y=814, z=180)
             )
             axis.plot([x1, x2], [y1, y2], color="red", lw=1.0)
 
-            x1, y1, _ = game_to_pixel(map_name, Vector3(x=195.87492752075195, y=2467.874755859375, z=-52.5000057220459))
+            x1, y1, _ = game_to_pixel(map_name, Vector3(x=-680, y=834, z=180))
             x2, y2, _ = game_to_pixel(
-                map_name, Vector3(x=-750.2501831054688, y=-790.8750915527344, z=187.00001525878906)
+                map_name, Vector3(x=15, y=2168, z=-65)
             )
             axis.plot([x1, x2], [y1, y2], color="red", lw=1.0)
 
@@ -1452,8 +1468,9 @@ def plot_map_reachability_examples() -> None:
                 granularity=granularity,
             )
 
-plot_callouts("de_anubis")
-# plot_triangles(with_clipping=True)
+
+# plot_callouts("de_anubis")
+plot_triangles(with_clipping=False)
 # generate_grids()
 # plot_paths()
 # plot_map_reachability_examples()
@@ -1465,3 +1482,24 @@ plot_callouts("de_anubis")
 
 # plot_spread_from_input("de_ancient", "200", "fine", Nav.from_json("awpy/data/nav_200/de_ancient.json"))
 # plot_spread_from_input("de_ancient", "200", "rough", Nav.from_json("awpy/data/nav_200/de_ancient.json"))
+
+
+# plot_triangles()
+
+
+# for map_name in SUPPORTED_MAPS:
+#     print(MAP_DATA[map_name])
+#     print(f"At map: {map_name}")
+
+#     target_path = Path("awpy/data/nav") / f"{map_name}.json"
+
+#     modified_nav = Nav.from_json(target_path)
+
+#     plot_map_connections(
+#         "connections",
+#         modified_nav.areas,
+#         map_name=map_name,
+#         extra_areas={},
+#         with_arrows=True,
+#         granularity="nom",
+#     )
