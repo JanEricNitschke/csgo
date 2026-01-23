@@ -43,24 +43,24 @@ print("Finished imports, starting script", flush=True)
 
 print(NAV_DATA.keys())
 SUPPORTED_MAPS = (
-    "de_ancient",
-    "de_anubis",
+    # "de_ancient",
+    # "de_anubis",
     "de_dust2",
-    "de_inferno",
-    "de_mirage",
-    "de_nuke",
-    "de_overpass",
-    "de_train",
-    "de_vertigo",
-    "ar_baggage",
-    "ar_pool_day",
-    "ar_shoots",
-    "cs_italy",
-    "cs_office",
-    "de_basalt",
-    "de_edin",
-    "de_palais",
-    "de_whistle",
+    # "de_inferno",
+    # "de_mirage",
+    # "de_nuke",
+    # "de_overpass",
+    # "de_train",
+    # "de_vertigo",
+    # "ar_baggage",
+    # "ar_pool_day",
+    # "ar_shoots",
+    # "cs_italy",
+    # "cs_office",
+    # "de_basalt",
+    # "de_edin",
+    # "de_palais",
+    # "de_whistle",
     # "test_good",
 )
 GRANULARITIES = (
@@ -1007,33 +1007,6 @@ def plot_triangles(*, with_clipping: bool = False) -> None:
             continue
         fig.set_size_inches(19.2, 21.6)
 
-        if map_name == "de_dust2":
-            # x1, y1, _ = game_to_pixel(map_name, Vector3(x=195.87492752075195, y=2467.874755859375, z=-52.5000057220459))
-            # x2, y2, _ = game_to_pixel(
-            #     map_name, Vector3(x=-659.0001831054688, y=-766.5000813802084, z=188.00001525878906)
-            # )
-            # axis.plot([x1, x2], [y1, y2], color="red", lw=1.0)
-
-            # x1, y1, _ = game_to_pixel(map_name, Vector3(x=195.87492752075195, y=2467.874755859375, z=-52.5000057220459))
-            # x2, y2, _ = game_to_pixel(
-            #     map_name, Vector3(x=-750.2501831054688, y=-790.8750915527344, z=187.00001525878906)
-            # )
-            # axis.plot([x1, x2], [y1, y2], color="red", lw=1.0)
-
-
-
-            x1, y1, _ = game_to_pixel(map_name, Vector3(x=-680, y=834, z=180))
-            x2, y2, _ = game_to_pixel(
-                map_name, Vector3(x=-1349, y=814, z=180)
-            )
-            axis.plot([x1, x2], [y1, y2], color="red", lw=1.0)
-
-            x1, y1, _ = game_to_pixel(map_name, Vector3(x=-680, y=834, z=180))
-            x2, y2, _ = game_to_pixel(
-                map_name, Vector3(x=15, y=2168, z=-65)
-            )
-            axis.plot([x1, x2], [y1, y2], color="red", lw=1.0)
-
         _plot_collision_triangles(map_name, axis, vis_checker)
 
         if map_name == "de_dust2":
@@ -1052,6 +1025,32 @@ def plot_triangles(*, with_clipping: bool = False) -> None:
                 color="yellow",
                 zorder=20,
             )
+
+            # x1, y1, _ = game_to_pixel(map_name, Vector3(x=195.87492752075195, y=2467.874755859375, z=-52.5000057220459))
+            # x2, y2, _ = game_to_pixel(
+            #     map_name, Vector3(x=-659.0001831054688, y=-766.5000813802084, z=188.00001525878906)
+            # )
+            # axis.plot([x1, x2], [y1, y2], color="red", lw=1.0)
+
+            # x1, y1, _ = game_to_pixel(map_name, Vector3(x=195.87492752075195, y=2467.874755859375, z=-52.5000057220459))
+            # x2, y2, _ = game_to_pixel(
+            #     map_name, Vector3(x=-750.2501831054688, y=-790.8750915527344, z=187.00001525878906)
+            # )
+            # axis.plot([x1, x2], [y1, y2], color="red", lw=1.0)
+
+            pos1 = Vector3(x=-680, y=834, z=180)
+            pos2 = Vector3(x=-1349, y=814, z=180)
+            x1, y1, _ = game_to_pixel(map_name, pos1)
+            x2, y2, _ = game_to_pixel(map_name, pos2)
+            print(f"Pos1 {pos1} and Pos2 {pos2} are visible: {vis_checker.is_visible(pos1, pos2)}")
+            axis.plot([x1, x2], [y1, y2], color="red", lw=1.0, zorder=10)
+
+            pos1 = Vector3(x=-680, y=834, z=180)
+            pos2= Vector3(x=15, y=2168, z=-65)
+            x1, y1, _ = game_to_pixel(map_name, pos1)
+            x2, y2, _ = game_to_pixel(map_name, pos2)
+            print(f"Pos1 {pos1} and Pos2 {pos2} are visible: {vis_checker.is_visible(pos1, pos2)}")
+            axis.plot([x1, x2], [y1, y2], color="red", lw=1.0, zorder=10)
 
         plt.savefig(
             output_dir / f"triangles_{map_name}{suffix}.png",
@@ -1471,6 +1470,7 @@ def plot_map_reachability_examples() -> None:
 
 # plot_callouts("de_anubis")
 plot_triangles(with_clipping=False)
+plot_triangles(with_clipping=True)
 # generate_grids()
 # plot_paths()
 # plot_map_reachability_examples()
