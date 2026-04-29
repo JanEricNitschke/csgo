@@ -29,6 +29,26 @@
     "lower_level_max_units": -1000000.0,
     "vertical_sections": {}
   },
+  "ar_shoots_night": {
+    "pos_x": -1368,
+    "pos_y": 1952,
+    "scale": 2.6875,
+    "rotate": null,
+    "zoom": null,
+    "lower_level_max_units": -1000000.0,
+    "vertical_sections": {}
+  },
+  "cs_alpine": {
+    "pos_x": -2107,
+    "pos_y": 4687,
+    "scale": 6.5296063,
+    "rotate": null,
+    "zoom": null,
+    "lower_level_max_units": -1000000.0,
+    "vertical_sections": {
+      "default": { "altitude_min": -16384.0, "altitude_max": 16384.0 }
+    }
+  },
   "cs_italy": {
     "pos_x": -2647,
     "pos_y": 2592,
@@ -65,10 +85,10 @@
     "lower_level_max_units": -1000000.0,
     "vertical_sections": {}
   },
-  "de_basalt": {
-    "pos_x": -2345,
-    "pos_y": 2391,
-    "scale": 4.37,
+  "de_cache": {
+    "pos_x": -2000,
+    "pos_y": 3250,
+    "scale": 5.5,
     "rotate": null,
     "zoom": null,
     "lower_level_max_units": -1000000.0,
@@ -89,15 +109,6 @@
     "scale": 4.4,
     "rotate": 1,
     "zoom": 1.1,
-    "lower_level_max_units": -1000000.0,
-    "vertical_sections": {}
-  },
-  "de_edin": {
-    "pos_x": -383,
-    "pos_y": 4420,
-    "scale": 4.803717,
-    "rotate": null,
-    "zoom": null,
     "lower_level_max_units": -1000000.0,
     "vertical_sections": {}
   },
@@ -140,17 +151,37 @@
     "lower_level_max_units": -1000000.0,
     "vertical_sections": {}
   },
-  "de_palais": {
-    "pos_x": -1353,
-    "pos_y": 2044,
-    "scale": 2.8003397,
+  "de_poseidon": {
+    "pos_x": -1046,
+    "pos_y": 1166,
+    "scale": 3.0124886,
     "rotate": null,
     "zoom": null,
     "lower_level_max_units": -1000000.0,
     "vertical_sections": {
-      "default": { "altitude_min": -16384.0, "altitude_max": 47.99997 },
-      "higher1": { "altitude_min": 47.99997, "altitude_max": 214.00027 },
-      "higher2": { "altitude_min": 214.00027, "altitude_max": 16384.0 }
+      "default": { "altitude_min": -16384.0, "altitude_max": 16384.0 }
+    }
+  },
+  "de_sanctum": {
+    "pos_x": -1692,
+    "pos_y": 654,
+    "scale": 3.4071784,
+    "rotate": null,
+    "zoom": null,
+    "lower_level_max_units": -1000000.0,
+    "vertical_sections": {
+      "default": { "altitude_min": -16384.0, "altitude_max": 16384.0 }
+    }
+  },
+  "de_stronghold": {
+    "pos_x": -2786,
+    "pos_y": 2598,
+    "scale": 2.9476247,
+    "rotate": null,
+    "zoom": null,
+    "lower_level_max_units": -1000000.0,
+    "vertical_sections": {
+      "default": { "altitude_min": -16384.0, "altitude_max": 16384.0 }
     }
   },
   "de_train": {
@@ -177,12 +208,12 @@
       "lower": { "altitude_min": -10000.0, "altitude_max": 11700.0 }
     }
   },
-  "de_whistle": {
-    "pos_x": -1825,
-    "pos_y": 1104,
-    "scale": 2.8,
-    "rotate": 0,
-    "zoom": 1.0,
+  "de_warden": {
+    "pos_x": -3150,
+    "pos_y": 2681,
+    "scale": 5.642361,
+    "rotate": null,
+    "zoom": null,
     "lower_level_max_units": -1000000.0,
     "vertical_sections": {}
   },

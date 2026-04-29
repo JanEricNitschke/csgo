@@ -45,7 +45,8 @@ print(NAV_DATA.keys())
 SUPPORTED_MAPS = (
     # "de_ancient",
     # "de_anubis",
-    "de_dust2",
+    # "de_dust2",
+    "de_cache",
     # "de_inferno",
     # "de_mirage",
     # "de_nuke",
@@ -1467,10 +1468,28 @@ def plot_map_reachability_examples() -> None:
                 granularity=granularity,
             )
 
-
-# plot_callouts("de_anubis")
-plot_triangles(with_clipping=False)
-plot_triangles(with_clipping=True)
+def plot_nav(map_name: str):
+    output_dir = Path("navs")
+    output_dir.mkdir(exist_ok=True, parents=True)
+    try:
+        fig, axis = plot_map(map_name)
+    except FileNotFoundError:
+        return
+    fig.set_size_inches(19.2, 21.6)
+    _plot_tiles(NAV_DATA[map_name].areas, map_name, axis)
+    plt.savefig(
+        output_dir / f"{map_name}.png",
+        bbox_inches="tight",
+        dpi=300,
+    )
+    fig.clear()
+    plt.close(fig)
+for map_name in NAV_DATA:
+    if map_name not in MAP_DATA:
+        continue
+    plot_nav(map_name)
+# plot_triangles(with_clipping=False)
+# plot_triangles(with_clipping=True)
 # generate_grids()
 # plot_paths()
 # plot_map_reachability_examples()
